@@ -22,8 +22,8 @@ export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
     return (
         <>
             <ul className="bg-sidebar flex flex-col py-4 px-layout border-l-2 border-l-primaryLight rounded-tr-md rounded-br-md pl-5 ">
-                {QUICK_ACTION_DATA.map((item: IQuickActionItem, index) => (
-                    <li key={index} className="whitespace-nowrap py-2 hover:text-primaryLight">
+                {QUICK_ACTION_DATA.map((item: IQuickActionItem) => (
+                    <li key={item.id} className="whitespace-nowrap py-2 hover:text-primaryLight">
                         <button onClick={() => setOpenModalId(item.id)}>{item.label}</button>
                     </li>
                 ))}
@@ -34,7 +34,7 @@ export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
                     isOpen={!!openModalId}
                     onClose={() => handleOnClose()}
                     modalTitle={activeItem.label}
-                    type={activeItem.type}
+                    assetType={activeItem.type}
                 />
             )}
         </>

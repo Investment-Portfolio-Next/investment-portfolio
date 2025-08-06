@@ -15,17 +15,17 @@ import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
 
 interface TransactionsFormProps {
-    type: AssetType
+    assetType: AssetType
     onClose: () => void
 }
 
-export function TransactionsForm({ type, onClose }: TransactionsFormProps) {
+export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
     const today = formatDateToInput(new Date())
 
     // TODO: заменить временные значения на реальные
     const accountOpenDate = new Date('2020-01-01') //дата открытия счета
     const assetQuantityLimit = 1000 // кол-во конкретного ассета - после сабмита с бека
-    const isBond = type === 'bond'
+    const isBond = assetType === 'bond'
 
     const validations = getValidationRules({
         accountOpenDate,
@@ -65,7 +65,7 @@ export function TransactionsForm({ type, onClose }: TransactionsFormProps) {
     const onSubmit: SubmitHandler<ITransactionForm> = (data) => {
         const submissionData = {
             ...data,
-            type,
+            assetType,
         }
 
         console.log(submissionData)
