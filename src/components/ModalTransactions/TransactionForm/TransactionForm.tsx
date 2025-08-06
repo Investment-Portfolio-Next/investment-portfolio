@@ -80,7 +80,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 label="Asset ID"
                 type="text"
                 registration={register('symbolID', validations.symbolID)}
-                error={errors.symbolID?.message}
+                // error={errors.symbolID?.message}
                 assetType={assetType}
             />
             <div className="grid grid-cols-3 gap-4">
