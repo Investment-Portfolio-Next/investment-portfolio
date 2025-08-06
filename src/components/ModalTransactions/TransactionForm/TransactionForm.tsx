@@ -13,6 +13,7 @@ import type { ITransactionForm } from './transactionForm.types'
 import { transactionTypeOptions, transactionCurrencyOptions } from './transactionsOptions.data'
 import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
+import { SearchField } from '@/ui/form/searchField/SearchField'
 
 interface TransactionsFormProps {
     assetType: AssetType
@@ -75,11 +76,12 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-            <Field
+            <SearchField
                 label="Asset ID"
                 type="text"
                 registration={register('symbolID', validations.symbolID)}
                 error={errors.symbolID?.message}
+                assetType={assetType}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField
