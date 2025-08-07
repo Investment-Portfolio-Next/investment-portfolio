@@ -1,6 +1,5 @@
 'use client'
 
-// import Link from 'next/link'
 import { SIDEBAR_DATA } from './sidebarMenu.data'
 import type { ISidebarItem } from './sidebarMenu.types'
 import { useEffect, useRef, useState } from 'react'
@@ -65,7 +64,7 @@ export function SidebarMenu({ collapsedMenu, ignoreClickRef }: SidebarMenuProps)
             </ul>
             {submenuOpen && (
                 <div ref={submenuRef} className="absolute left-full top-0 z-10 text-white/80">
-                    <QuickActionSubmenu />
+                    <QuickActionSubmenu closeSubmenu={() => setSubmenuOpen(false)} />
                 </div>
             )}
         </nav>

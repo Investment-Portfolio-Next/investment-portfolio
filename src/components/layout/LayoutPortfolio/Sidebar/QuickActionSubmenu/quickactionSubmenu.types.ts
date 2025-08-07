@@ -1,7 +1,7 @@
-import type { ModalProps } from '../../../../ui/Modal/modal.types'
+import type { AssetType } from '@/types/commonTypes'
 
 export interface IQuickActionItem {
     id: string
     label: string
-    modal: React.ComponentType<ModalProps>
+    type: AssetType
 }

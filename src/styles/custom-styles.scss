@@ -7,4 +7,77 @@
     .sidebar-item-transition-custom {
         @apply whitespace-nowrap overflow-hidden transition-opacity duration-300 ease-in-out;
     }
+
+    .input-label {
+        @apply block mb-1 text-sm text-white/60;
+    }
+    .input-basic {
+        @apply w-full bg-transparent px-3 py-2 text-sm border rounded transition-colors focus:outline-none focus:ring-0;
+    }
+
+    .text-green-gradient {
+        @apply bg-custom-green-gradient;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .green-gradient-border {
+        position: relative;
+        @apply rounded;
+        z-index: 0;
+        overflow: hidden;
+    }
+    .green-gradient-border::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        border-radius: inherit;
+        @apply bg-custom-green-gradient;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: destination-out;
+        mask-composite: exclude;
+        pointer-events: none;
+        z-index: -1;
+        transition: opacity 0.2s ease;
+    }
+    .green-gradient-border:hover::before {
+        opacity: 0.9;
+    }
+    .green-gradient-border:active::before {
+        opacity: 0.8;
+    }
+
+    .text-orange-gradient {
+        @apply bg-custom-orange-gradient;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .orange-gradient-border {
+        position: relative;
+        @apply rounded;
+        z-index: 0;
+        overflow: hidden;
+    }
+    .orange-gradient-border::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        border-radius: inherit;
+        @apply bg-custom-orange-gradient;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: destination-out;
+        mask-composite: exclude;
+        pointer-events: none;
+        z-index: -1;
+        transition: opacity 0.2s ease;
+    }
+    .orange-gradient-border:hover::before {
+        opacity: 0.9;
+    }
+    .orange-gradient-border:active::before {
+        opacity: 0.8;
+    }
 }

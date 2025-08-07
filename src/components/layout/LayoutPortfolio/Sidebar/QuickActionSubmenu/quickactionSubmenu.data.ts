@@ -1,12 +1,8 @@
 import type { IQuickActionItem } from '@/components/layout/LayoutPortfolio/Sidebar/QuickActionSubmenu/quickactionSubmenu.types'
-import { ModalBondTransaction } from '@/components/ModalTransactions/ModalBondTransaction/ModalBondTransaction'
-import { ModalStockTransaction } from '@/components/ModalTransactions/ModalStockTransaction/ModalStockTransaction'
-import { ModalETFTransaction } from '@/components/ModalTransactions/ModalETFTransaction/ModalETFTransaction'
-import { ModalCryptoTransaction } from '@/components/ModalTransactions/ModalCryptoTransaction/ModalCryptoTransaction'
 
 export const QUICK_ACTION_DATA: IQuickActionItem[] = [
-    { id: 'stock', label: 'Add Stock Transaction', modal: ModalStockTransaction },
-    { id: 'etf', label: 'Add ETF Transaction', modal: ModalETFTransaction },
-    { id: 'bond', label: 'Add Bond Transaction', modal: ModalBondTransaction },
-    { id: 'crypto', label: 'Add Crypto Transaction', modal: ModalCryptoTransaction },
+    { id: '1', label: 'Add Stock Transaction', type: 'stock' },
+    { id: '2', label: 'Add ETF Transaction', type: 'etf' },
+    { id: '3', label: 'Add Bond Transaction', type: 'bond' },
+    { id: '4', label: 'Add Crypto Transaction', type: 'crypto' },
 ]
