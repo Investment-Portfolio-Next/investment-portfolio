@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import type { InputHTMLAttributes } from 'react'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { useQuery } from '@tanstack/react-query'
+import { X } from 'lucide-react'
+import { LoaderCircle } from 'lucide-react'
 
 interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
     label: string
@@ -143,6 +145,8 @@ const fetchSearchResults = async (searchString: string, assetType: AssetType): P
     }
 
     const data = await response.json()
+    console.log('data', data)
+    // TODO: apply fallback APIs functionality
 
     // Transform response based on asset type
     switch (assetType) {
@@ -295,11 +299,16 @@ export function SearchField({
         }
     }
 
+    useEffect(() => {
+        console.log('searchResults: ', searchResults)
+    }, [searchResults])
+
     return (
         <div className="relative">
             <label>
                 <span className="input-label">{label}</span>
                 <div className="relative">
+                    {/* TODO: bring error from failed search  */}
                     <input
                         {...inputProps}
                         className={`h-9 input-basic ${error ? 'border-error focus:border-error' : styles}`}
@@ -310,41 +319,19 @@ export function SearchField({
                         onBlur={handleInputBlur}
                         autoComplete="off"
                     />
-                    {/* {(isLoading || isFetching) && (
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                            <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-600 rounded-full"></div>
-                        </div>
-                    )} */}
-
-                    {/* TODO: refactor clear button */}
-                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
-                        {/* Clear button - only show when there's text */}
-                        {searchString && (
+                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
+                        {searchString && !isLoading && !isFetching && (
                             <button
                                 type="button"
                                 onClick={handleClearInput}
-                                className="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                                tabIndex={-1}
+                                className="text-white/80 hover:text-primary "
+                                aria-label="Clear search field"
                             >
-                                <svg
-                                    className="w-4 h-4 text-gray-400 hover:text-gray-600"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
+                                <X size={16} />
                             </button>
                         )}
-
-                        {/* Loading spinner */}
                         {(isLoading || isFetching) && (
-                            <div className="p-1">
-                                <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-600 rounded-full"></div>
-                            </div>
+                            <LoaderCircle className="animate-spin h-4 w-4 text-primaryDark" />
                         )}
                     </div>
                 </div>
