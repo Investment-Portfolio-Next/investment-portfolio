@@ -13,19 +13,20 @@ import type { ITransactionForm } from './transactionForm.types'
 import { transactionTypeOptions, transactionCurrencyOptions } from './transactionsOptions.data'
 import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
+import { SearchField } from '@/ui/form/searchField/SearchField'
 
 interface TransactionsFormProps {
-    type: AssetType
+    assetType: AssetType
     onClose: () => void
 }
 
-export function TransactionsForm({ type, onClose }: TransactionsFormProps) {
+export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
     const today = formatDateToInput(new Date())
 
     // TODO: заменить временные значения на реальные
     const accountOpenDate = new Date('2020-01-01') //дата открытия счета
     const assetQuantityLimit = 1000 // кол-во конкретного ассета - после сабмита с бека
-    const isBond = type === 'bond'
+    const isBond = assetType === 'bond'
 
     const validations = getValidationRules({
         accountOpenDate,
@@ -65,7 +66,7 @@ export function TransactionsForm({ type, onClose }: TransactionsFormProps) {
     const onSubmit: SubmitHandler<ITransactionForm> = (data) => {
         const submissionData = {
             ...data,
-            type,
+            assetType,
         }
 
         console.log(submissionData)
@@ -75,11 +76,12 @@ export function TransactionsForm({ type, onClose }: TransactionsFormProps) {
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-            <Field
+            <SearchField
                 label="Asset ID"
                 type="text"
                 registration={register('symbolID', validations.symbolID)}
-                error={errors.symbolID?.message}
+                // error={errors.symbolID?.message}
+                assetType={assetType}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField

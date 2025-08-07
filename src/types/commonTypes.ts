@@ -9,3 +9,5 @@ export interface CurrencyMeta {
     label: string
     symbol: string
 }
+
+export type FieldVariant = 'primary' | 'secondary'

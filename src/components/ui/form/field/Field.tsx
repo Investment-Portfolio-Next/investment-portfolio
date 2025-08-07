@@ -1,19 +1,13 @@
 import type { InputHTMLAttributes } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import { Calendar } from 'lucide-react'
-
-type FieldVariant = 'primary' | 'secondary'
-
+import type { FieldVariant } from '@/types/commonTypes'
+import { variantStyles } from '@/constants/borderVariants.constants'
 interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string
     error?: string
     registration: UseFormRegisterReturn
     variant?: FieldVariant
-}
-
-const variantStyles = {
-    primary: 'border-white focus:border-primaryDark',
-    secondary: 'border-white focus:border-secondaryDark',
 }
 
 export function Field({ label, error, registration, variant = 'primary', ...props }: FieldProps) {

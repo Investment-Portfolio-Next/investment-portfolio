@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import '../styles/globals.scss'
+import { QueryProvider } from '@/providers/QueryProvider'
 
 const openSans = Open_Sans({
     subsets: ['latin', 'cyrillic'],
@@ -24,7 +25,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${openSans.variable} antialiased`}>{children}</body>
+            <body className={`${openSans.variable} antialiased`}>
+                <QueryProvider>{children}</QueryProvider>
+            </body>
         </html>
     )
 }

@@ -8,13 +8,13 @@ interface ModalTransactionsProps {
     isOpen: boolean
     onClose: () => void
     modalTitle: string
-    type: AssetType
+    assetType: AssetType
 }
 
-export function ModalTransactions({ isOpen, onClose, modalTitle, type }: ModalTransactionsProps) {
+export function ModalTransactions({ isOpen, onClose, modalTitle, assetType }: ModalTransactionsProps) {
     return (
         <Modal isOpen={isOpen} onClose={onClose} modalTitle={modalTitle}>
-            <TransactionsForm type={type} onClose={onClose} />
+            <TransactionsForm assetType={assetType} onClose={onClose} />
         </Modal>
     )
 }
