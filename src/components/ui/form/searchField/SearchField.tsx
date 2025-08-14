@@ -1,14 +1,13 @@
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import type { AssetType, FieldVariant } from '@/types/commonTypes'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { InputHTMLAttributes } from 'react'
 import { variantStyles } from '@/constants/borderVariants.constants'
-import { useQuery } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { LoaderCircle } from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
-import { fetchSearchResults } from '@/services/transactionApi/apiSearchISIN'
-import type { SearchResult } from '@/services/transactionApi/apiSearchISIN'
+import type { SearchResult } from '@/services/transactionApi/transaction.types'
+import { useAssetSearch } from '@/services/transactionApi/useAssetSearch'
 
 interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
     label: string
@@ -30,6 +29,8 @@ export function SearchField({
 
     const [searchString, setSearchString] = useState<string>('')
     const [showResults, setShowResults] = useState<boolean>(false)
+    const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null)
+    const [hasUserSelected, setHasUserSelected] = useState<boolean>(false)
 
     const debouncedSearchString = useDebounce(searchString, 1000)
 
@@ -38,25 +39,22 @@ export function SearchField({
         error,
         isLoading,
         isFetching,
-    } = useQuery({
-        queryKey: ['search', debouncedSearchString, assetType],
-        queryFn: () => fetchSearchResults(debouncedSearchString, assetType),
-        enabled: debouncedSearchString.length >= 2,
-        staleTime: 5 * 60 * 1000,
-        gcTime: 10 * 60 * 1000,
-        retry: 3,
-    })
+    } = useAssetSearch(!hasUserSelected && debouncedSearchString.trim() !== '' ? debouncedSearchString : '', assetType)
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setSearchString(value)
+        setHasUserSelected(false)
+        setSelectedResult(null)
         setShowResults(true)
         registration.onChange(e) // Update form registration value
     }
 
     const handleResultSelect = (result: SearchResult) => {
-        const selectedValue = result.name // or result.symbol
-        setSearchString(selectedValue)
+        const selectedValue = result.symbol
+        setHasUserSelected(true)
+        setSearchString(`${result.symbol} - ${result.name}`)
+        setSelectedResult(result)
         setShowResults(false)
 
         // Update the form registration
@@ -67,9 +65,13 @@ export function SearchField({
         // TODO: Call onSelect callback
         onSelect?.(selectedValue)
     }
+    useEffect(() => {
+        console.log('selectedResult: ', selectedResult)
+    }, [selectedResult])
 
     const handleClearInput = () => {
         setSearchString('')
+        setSelectedResult(null)
         setShowResults(false)
 
         // Clear the form registration
@@ -82,20 +84,14 @@ export function SearchField({
     }
 
     const handleInputBlur = () => {
-        // Delay hiding results to allow for clicks
-        setTimeout(() => setShowResults(false), 200)
+        setTimeout(() => setShowResults(false), 500)
     }
 
     const handleInputFocus = () => {
-        if (searchResults && searchResults.length > 0) {
+        if (!hasUserSelected && searchResults && searchResults.length > 0) {
             setShowResults(true)
         }
     }
-
-    useEffect(() => {
-        console.log('searchResults: ', searchResults)
-        console.log('error', error)
-    }, [searchResults, error])
 
     return (
         <div className="relative">
@@ -111,6 +107,7 @@ export function SearchField({
                         onFocus={handleInputFocus}
                         onBlur={handleInputBlur}
                         autoComplete="off"
+                        placeholder={`Search for ${assetType}...`}
                     />
                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
                         {searchString && !isLoading && !isFetching && (
@@ -148,9 +145,7 @@ export function SearchField({
             )}
 
             {/* Error Message */}
-            <p className="text-error text-xs mt-1 min-h-[1.125rem]">
-                {error ? `Search error: ${error.message}` : '\u00A0'}
-            </p>
+            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{error ? error.message : '\u00A0'}</p>
         </div>
     )
 }
