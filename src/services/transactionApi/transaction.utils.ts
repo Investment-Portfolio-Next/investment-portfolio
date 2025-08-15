@@ -60,11 +60,7 @@ const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean
     return false
 }
 
-export const transformSearchResults = (
-    results: DataSearchResults,
-    assetType: AssetType,
-    provider: APIProvider,
-): SearchResult[] => {
+export const transformSearchResults = (results: DataSearchResults, assetType: AssetType): SearchResult[] => {
     return results
         .filter((result) => {
             let instrumentType: string
@@ -87,21 +83,18 @@ export const transformSearchResults = (
                     symbol: result.symbol,
                     name: result.instrument_name,
                     type: result.instrument_type,
-                    provider,
                 }
             } else if (isFinnhubResult(result)) {
                 return {
                     symbol: result.symbol,
                     name: result.description,
                     type: result.type,
-                    provider,
                 }
             } else if (isAlphaVantageResult(result)) {
                 return {
                     symbol: result['1. symbol'],
                     name: result['2. name'],
                     type: result['3. type'],
-                    provider,
                 }
             } else {
                 throw new Error('Unknown result type')

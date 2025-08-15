@@ -50,13 +50,13 @@ const searchWithProvider = async (
     switch (provider) {
         case 'twelvedata':
             const twelveData = data as TwelveDataSearchResponse
-            return transformSearchResults(twelveData.data, assetType, provider)
+            return transformSearchResults(twelveData.data, assetType)
         case 'finnhub':
             const finnhubData = data as FinnhubSearchResponse
-            return transformSearchResults(finnhubData.result, assetType, provider)
+            return transformSearchResults(finnhubData.result, assetType)
         case 'alphavantage':
             const alphaVantageData = data as AlphaVantageSearchResponse
-            return transformSearchResults(alphaVantageData.bestMatches, assetType, provider)
+            return transformSearchResults(alphaVantageData.bestMatches, assetType)
         case 'coinpaprika':
             return transformCoinPaprikaSearchResults(data.currencies, provider)
         default:

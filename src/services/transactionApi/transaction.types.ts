@@ -15,7 +15,6 @@ export interface SearchResult {
     symbol: string
     name: string
     type: string
-    provider: APIProvider
 }
 
 //TODO: uncomment for price fetches
