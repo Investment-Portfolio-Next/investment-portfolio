@@ -1,15 +1,16 @@
 import type {
     SearchResult,
-    APIProvider,
     TwelveDataSearchResult,
     FinnhubSearchResult,
-    CoinPaprikaResult,
     AlphaVantageSearchResult,
     DataSearchResults,
     SearchResultUnion,
+    CoinGeckoSearchResult,
+    CoinPaprikaSearchResult,
 } from './transaction.types'
 import type { AssetType } from '@/types/commonTypes'
 
+// stocks, etfs
 const isTwelveDataResult = (result: SearchResultUnion): result is TwelveDataSearchResult => {
     return 'instrument_name' in result && 'instrument_type' in result
 }
@@ -60,7 +61,7 @@ const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean
     return false
 }
 
-export const transformSearchResults = (results: DataSearchResults, assetType: AssetType): SearchResult[] => {
+export const transformStocksETFSearchResults = (results: DataSearchResults, assetType: AssetType): SearchResult[] => {
     return results
         .filter((result) => {
             let instrumentType: string
@@ -102,16 +103,32 @@ export const transformSearchResults = (results: DataSearchResults, assetType: As
         })
 }
 
-//-------------------------------
+//crypto
+const isCoinGeckoSearchResult = (result: SearchResultUnion): result is CoinGeckoSearchResult => {
+    return !('type' in result)
+}
+const isCoinPaprikaSearchResult = (result: SearchResultUnion): result is CoinPaprikaSearchResult => {
+    return 'type' in result
+}
 
-export const transformCoinPaprikaSearchResults = (
-    results: CoinPaprikaResult[],
-    provider: APIProvider,
-): SearchResult[] => {
-    return results.map((result) => ({
-        symbol: result.symbol,
-        name: result.name,
-        type: 'cryptocurrency',
-        provider,
-    }))
+export const transformCryptoSearchResults = (results: DataSearchResults): SearchResult[] => {
+    return results.map((result): SearchResult => {
+        if (isCoinGeckoSearchResult(result)) {
+            return {
+                id: result.id,
+                symbol: result.symbol,
+                name: result.name,
+                type: 'crypto',
+            }
+        } else if (isCoinPaprikaSearchResult(result)) {
+            return {
+                id: result.id,
+                symbol: result.symbol,
+                name: result.name,
+                type: result.type,
+            }
+        } else {
+            throw new Error('Unknown result type')
+        }
+    })
 }
