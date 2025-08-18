@@ -113,25 +113,31 @@ const transformResult = (result: SearchResultUnion, provider: APIProvider): Sear
         case 'twelvedata': {
             const res = result as TwelveDataSearchResult
             return {
+                id: null,
                 symbol: res.symbol,
                 name: res.instrument_name,
                 type: res.instrument_type,
+                provider: provider,
             }
         }
         case 'finnhub': {
             const res = result as FinnhubSearchResult
             return {
+                id: null,
                 symbol: res.symbol,
                 name: res.description,
                 type: res.type,
+                provider: provider,
             }
         }
         case 'alphavantage': {
             const res = result as AlphaVantageSearchResult
             return {
+                id: null,
                 symbol: res['1. symbol'],
                 name: res['2. name'],
                 type: res['3. type'],
+                provider: provider,
             }
         }
         case 'coingecko': {
@@ -141,6 +147,7 @@ const transformResult = (result: SearchResultUnion, provider: APIProvider): Sear
                 symbol: res.symbol,
                 name: res.name,
                 type: 'crypto',
+                provider: provider,
             }
         }
         case 'coinpaprika': {
@@ -150,6 +157,7 @@ const transformResult = (result: SearchResultUnion, provider: APIProvider): Sear
                 symbol: res.symbol,
                 name: res.name,
                 type: res.type,
+                provider: provider,
             }
         }
         //TODO: add for bonds

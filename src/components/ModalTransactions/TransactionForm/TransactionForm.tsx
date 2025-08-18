@@ -14,6 +14,7 @@ import { transactionTypeOptions, transactionCurrencyOptions } from './transactio
 import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
 import { SearchField } from '@/ui/form/searchField/SearchField'
+import { useAsset } from '@/store/useAsset'
 
 interface TransactionsFormProps {
     assetType: AssetType
@@ -21,6 +22,7 @@ interface TransactionsFormProps {
 }
 
 export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
+    const asset = useAsset((state) => state.asset)
     const today = formatDateToInput(new Date())
 
     // TODO: заменить временные значения на реальные
@@ -152,6 +154,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 registration={register('notes', validations.notes)}
                 error={errors.notes?.message}
                 placeholder="You can add a comment for a transaction (optional)"
+                value={asset?.type || ''} // for testing
             />
 
             <div className="flex justify-between mt-2">

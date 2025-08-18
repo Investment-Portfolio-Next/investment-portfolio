@@ -1,6 +1,6 @@
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import type { AssetType, FieldVariant } from '@/types/commonTypes'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { InputHTMLAttributes } from 'react'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { X } from 'lucide-react'
@@ -8,6 +8,7 @@ import { LoaderCircle } from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
 import type { SearchResult } from '@/services/transactionApi/transaction.types'
 import { useAssetSearch } from '@/services/transactionApi/useAssetSearch'
+import { useAsset } from '@/store/useAsset'
 
 interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
     label: string
@@ -29,10 +30,11 @@ export function SearchField({
 
     const [searchString, setSearchString] = useState<string>('')
     const [showResults, setShowResults] = useState<boolean>(false)
-    const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null)
     const [hasUserSelected, setHasUserSelected] = useState<boolean>(false)
 
     const debouncedSearchString = useDebounce(searchString, 1000)
+
+    const { asset: selectedResult, setAsset, clearAsset } = useAsset()
 
     const {
         data: searchResults,
@@ -45,7 +47,7 @@ export function SearchField({
         const value = e.target.value
         setSearchString(value)
         setHasUserSelected(false)
-        setSelectedResult(null)
+        clearAsset()
         setShowResults(true)
         registration.onChange(e) // Update form registration value
     }
@@ -54,7 +56,7 @@ export function SearchField({
         const selectedValue = result.symbol
         setHasUserSelected(true)
         setSearchString(`${result.symbol} - ${result.name}`)
-        setSelectedResult(result)
+        setAsset(result)
         setShowResults(false)
 
         // Update the form registration
@@ -65,13 +67,13 @@ export function SearchField({
         // TODO: Call onSelect callback
         onSelect?.(selectedValue)
     }
-    useEffect(() => {
-        console.log('selectedResult: ', selectedResult)
-    }, [selectedResult])
+
+    console.log('selectedResult: ', selectedResult)
+    console.log('type', selectedResult?.type)
 
     const handleClearInput = () => {
         setSearchString('')
-        setSelectedResult(null)
+        clearAsset()
         setShowResults(false)
 
         // Clear the form registration

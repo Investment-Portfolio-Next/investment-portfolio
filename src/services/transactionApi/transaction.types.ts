@@ -16,7 +16,7 @@ export interface APIConfig {
 }
 
 export interface SearchResult {
-    id?: string
+    id?: string | null
     symbol: string
     name: string
     type: string
