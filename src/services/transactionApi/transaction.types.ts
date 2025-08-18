@@ -20,6 +20,7 @@ export interface SearchResult {
     symbol: string
     name: string
     type: string
+    provider?: APIProvider
 }
 
 //TODO: uncomment for price fetches
@@ -41,11 +42,11 @@ export interface SearchResult {
 // API Response types for different providers
 
 export type DataSearchResults =
-    | TwelveDataSearchResult[]
-    | FinnhubSearchResult[]
-    | AlphaVantageSearchResult[]
-    | CoinGeckoSearchResult[]
-    | CoinPaprikaSearchResult[]
+    | TwelveDataSearchResponse
+    | FinnhubSearchResponse
+    | AlphaVantageSearchResponse
+    | CoinGeckoSearchResponse
+    | CoinPaprikaSearchResponse
 
 export type SearchResultUnion =
     | TwelveDataSearchResult
@@ -63,7 +64,6 @@ export interface TwelveDataSearchResult {
 
 export interface TwelveDataSearchResponse {
     data: TwelveDataSearchResult[]
-    status: string
 }
 
 export interface TwelveDataPrice {
@@ -78,7 +78,6 @@ export interface FinnhubSearchResult {
 }
 
 export interface FinnhubSearchResponse {
-    count: number
     result: FinnhubSearchResult[]
 }
 

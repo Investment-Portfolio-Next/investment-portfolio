@@ -1,14 +1,6 @@
 import type { AssetType } from '@/types/commonTypes'
-import type {
-    APIProvider,
-    SearchResult,
-    TwelveDataSearchResponse,
-    FinnhubSearchResponse,
-    AlphaVantageSearchResponse,
-    CoinGeckoSearchResponse,
-    CoinPaprikaSearchResponse,
-} from './transaction.types'
-import { transformStocksETFSearchResults, transformCryptoSearchResults } from './transaction.utils'
+import type { APIProvider, SearchResult, DataSearchResults } from './transaction.types'
+import { transformSearchResults } from './transaction.utils'
 import { CRYPTO_PROVIDERS, BOND_PROVIDERS, STOCK_ETF_PROVIDERS, API_CONFIGS, API_KEYS } from './transaction.config'
 
 // Search function with fallback
@@ -48,24 +40,7 @@ const searchWithProvider = async (
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
     const data = await response.json()
+    const results = data as DataSearchResults
 
-    switch (provider) {
-        case 'twelvedata':
-            const twelveData = data as TwelveDataSearchResponse
-            return transformStocksETFSearchResults(twelveData.data, assetType)
-        case 'finnhub':
-            const finnhubData = data as FinnhubSearchResponse
-            return transformStocksETFSearchResults(finnhubData.result, assetType)
-        case 'alphavantage':
-            const alphaVantageData = data as AlphaVantageSearchResponse
-            return transformStocksETFSearchResults(alphaVantageData.bestMatches, assetType)
-        case 'coingecko':
-            const coingeckoData = data as CoinGeckoSearchResponse
-            return transformCryptoSearchResults(coingeckoData.coins)
-        case 'coinpaprika':
-            const coinpaprikaData = data as CoinPaprikaSearchResponse
-            return transformCryptoSearchResults(coinpaprikaData.currencies)
-        default:
-            return []
-    }
+    return transformSearchResults(results, assetType, provider)
 }

@@ -7,21 +7,14 @@ import type {
     SearchResultUnion,
     CoinGeckoSearchResult,
     CoinPaprikaSearchResult,
+    APIProvider,
+    TwelveDataSearchResponse,
+    FinnhubSearchResponse,
+    AlphaVantageSearchResponse,
+    CoinGeckoSearchResponse,
+    CoinPaprikaSearchResponse,
 } from './transaction.types'
 import type { AssetType } from '@/types/commonTypes'
-
-// stocks, etfs
-const isTwelveDataResult = (result: SearchResultUnion): result is TwelveDataSearchResult => {
-    return 'instrument_name' in result && 'instrument_type' in result
-}
-
-const isFinnhubResult = (result: SearchResultUnion): result is FinnhubSearchResult => {
-    return 'description' in result && 'type' in result && !('instrument_type' in result)
-}
-
-const isAlphaVantageResult = (result: SearchResultUnion): result is AlphaVantageSearchResult => {
-    return '1. symbol' in result && '2. name' in result && '3. type' in result
-}
 
 const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean => {
     const type = instrumentType.toLowerCase()
@@ -61,74 +54,118 @@ const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean
     return false
 }
 
-export const transformStocksETFSearchResults = (results: DataSearchResults, assetType: AssetType): SearchResult[] => {
-    return results
-        .filter((result) => {
-            let instrumentType: string
-
-            if (isTwelveDataResult(result)) {
-                instrumentType = result.instrument_type
-            } else if (isFinnhubResult(result)) {
-                instrumentType = result.type
-            } else if (isAlphaVantageResult(result)) {
-                instrumentType = result['3. type']
-            } else {
-                return false
-            }
-
-            return matchesAssetType(instrumentType, assetType)
-        })
-        .map((result): SearchResult => {
-            if (isTwelveDataResult(result)) {
-                return {
-                    symbol: result.symbol,
-                    name: result.instrument_name,
-                    type: result.instrument_type,
-                }
-            } else if (isFinnhubResult(result)) {
-                return {
-                    symbol: result.symbol,
-                    name: result.description,
-                    type: result.type,
-                }
-            } else if (isAlphaVantageResult(result)) {
-                return {
-                    symbol: result['1. symbol'],
-                    name: result['2. name'],
-                    type: result['3. type'],
-                }
-            } else {
-                throw new Error('Unknown result type')
-            }
-        })
+const isTwelveDataResponse = (data: DataSearchResults): data is TwelveDataSearchResponse => {
+    return 'data' in data && Array.isArray((data as TwelveDataSearchResponse).data)
 }
 
-//crypto
-const isCoinGeckoSearchResult = (result: SearchResultUnion): result is CoinGeckoSearchResult => {
-    return !('type' in result)
-}
-const isCoinPaprikaSearchResult = (result: SearchResultUnion): result is CoinPaprikaSearchResult => {
-    return 'type' in result
+const isFinnhubResponse = (data: DataSearchResults): data is FinnhubSearchResponse => {
+    return 'result' in data && Array.isArray((data as FinnhubSearchResponse).result)
 }
 
-export const transformCryptoSearchResults = (results: DataSearchResults): SearchResult[] => {
-    return results.map((result): SearchResult => {
-        if (isCoinGeckoSearchResult(result)) {
+const isAlphaVantageResponse = (data: DataSearchResults): data is AlphaVantageSearchResponse => {
+    return 'bestMatches' in data && Array.isArray((data as AlphaVantageSearchResponse).bestMatches)
+}
+
+const isCoinGeckoResponse = (data: DataSearchResults): data is CoinGeckoSearchResponse => {
+    return 'coins' in data && Array.isArray((data as CoinGeckoSearchResponse).coins)
+}
+
+const isCoinPaprikaResponse = (data: DataSearchResults): data is CoinPaprikaSearchResponse => {
+    return 'currencies' in data && Array.isArray((data as CoinPaprikaSearchResponse).currencies)
+}
+//TODO: add isBondsResponse for bonds
+
+const extractResultArray = (results: DataSearchResults, provider: APIProvider): SearchResultUnion[] => {
+    const resultArray = {
+        twelvedata: () => (isTwelveDataResponse(results) ? results.data : []),
+        finnhub: () => (isFinnhubResponse(results) ? results.result : []),
+        alphavantage: () => (isAlphaVantageResponse(results) ? results.bestMatches : []),
+        coingecko: () => (isCoinGeckoResponse(results) ? results.coins : []),
+        coinpaprika: () => (isCoinPaprikaResponse(results) ? results.currencies : []),
+        bondbase: () => [], //TODO: add for bonds
+    }
+
+    return resultArray[provider]?.() || []
+}
+
+const shouldShowSearchItem = (result: SearchResultUnion, assetType: AssetType, provider: APIProvider): boolean => {
+    if (provider === 'coingecko' || provider === 'coinpaprika' || provider === 'bondbase') {
+        return true
+    }
+
+    let instrumentType: string
+
+    if (provider === 'twelvedata') {
+        instrumentType = (result as TwelveDataSearchResult).instrument_type
+    } else if (provider === 'finnhub') {
+        instrumentType = (result as FinnhubSearchResult).type
+    } else if (provider === 'alphavantage') {
+        instrumentType = (result as AlphaVantageSearchResult)['3. type']
+    } else {
+        return false
+    }
+
+    return matchesAssetType(instrumentType, assetType)
+}
+
+const transformResult = (result: SearchResultUnion, provider: APIProvider): SearchResult => {
+    switch (provider) {
+        case 'twelvedata': {
+            const res = result as TwelveDataSearchResult
             return {
-                id: result.id,
-                symbol: result.symbol,
-                name: result.name,
+                symbol: res.symbol,
+                name: res.instrument_name,
+                type: res.instrument_type,
+            }
+        }
+        case 'finnhub': {
+            const res = result as FinnhubSearchResult
+            return {
+                symbol: res.symbol,
+                name: res.description,
+                type: res.type,
+            }
+        }
+        case 'alphavantage': {
+            const res = result as AlphaVantageSearchResult
+            return {
+                symbol: res['1. symbol'],
+                name: res['2. name'],
+                type: res['3. type'],
+            }
+        }
+        case 'coingecko': {
+            const res = result as CoinGeckoSearchResult
+            return {
+                id: res.id,
+                symbol: res.symbol,
+                name: res.name,
                 type: 'crypto',
             }
-        } else if (isCoinPaprikaSearchResult(result)) {
-            return {
-                id: result.id,
-                symbol: result.symbol,
-                name: result.name,
-                type: result.type,
-            }
-        } else {
-            throw new Error('Unknown result type')
         }
-    })
+        case 'coinpaprika': {
+            const res = result as CoinPaprikaSearchResult
+            return {
+                id: res.id,
+                symbol: res.symbol,
+                name: res.name,
+                type: res.type,
+            }
+        }
+        //TODO: add for bonds
+        default:
+            throw new Error(`Unknown provider: ${provider}`)
+    }
+}
+
+export const transformSearchResults = (
+    results: DataSearchResults,
+    assetType: AssetType,
+    provider: APIProvider,
+): SearchResult[] => {
+    const resultArr = extractResultArray(results, provider)
+
+    return resultArr
+        .filter((result) => shouldShowSearchItem(result, assetType, provider))
+        .map((result) => transformResult(result, provider))
 }
