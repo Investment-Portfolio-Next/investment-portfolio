@@ -22,7 +22,8 @@ interface TransactionsFormProps {
 }
 
 export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
-    const asset = useAsset((state) => state.asset)
+    const { asset, isLoading } = useAsset()
+
     const today = formatDateToInput(new Date())
 
     // TODO: заменить временные значения на реальные
@@ -48,7 +49,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             transactionType: 'buy',
             transactionCurrency: 'USD',
             transactionDate: today,
-            initialPrice: 0,
+            initialPrice: 0, // TODO: fix initial price
             transactionCommision: 0,
             transactionQuantity: 1,
             bondNominal: 0,
@@ -112,6 +113,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     step="any"
                     registration={register('initialPrice', validations.initialPrice)}
                     error={errors.initialPrice?.message}
+                    value={isLoading ? '0000' : asset?.price || ''} // TODO: add loader instead of 0000 here
                 />
                 <Field
                     label="Commission"

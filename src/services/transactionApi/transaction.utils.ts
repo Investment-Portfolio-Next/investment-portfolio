@@ -13,6 +13,14 @@ import type {
     AlphaVantageSearchResponse,
     CoinGeckoSearchResponse,
     CoinPaprikaSearchResponse,
+    AssetPrice,
+    AssetIdentifier,
+    CurrentPriceSearchUnion,
+    TwelveDataCurrentPriceSearchResponse,
+    FinnhubCurrentPriceSearchResponse,
+    AlphaVantageCurrentPriceSearchResponse,
+    CoinGeckoCurrentPriceSearchResponse,
+    CoinPaprikaCurrentPriceSearchResponse,
 } from './transaction.types'
 import type { AssetType } from '@/types/commonTypes'
 
@@ -176,4 +184,55 @@ export const transformSearchResults = (
     return resultArr
         .filter((result) => shouldShowSearchItem(result, assetType, provider))
         .map((result) => transformResult(result, provider))
+}
+
+// --------------------------------------------------
+
+export const transformCurrentPriceSearchResults = (
+    priceData: CurrentPriceSearchUnion,
+    assetIdentifier: AssetIdentifier,
+    provider: APIProvider,
+): AssetPrice => {
+    try {
+        switch (provider) {
+            case 'twelvedata': {
+                const data = priceData as TwelveDataCurrentPriceSearchResponse
+                if (!data.price) return null
+                const price = parseFloat(data.price)
+                return isNaN(price) ? null : price
+            }
+            case 'finnhub': {
+                const data = priceData as FinnhubCurrentPriceSearchResponse
+                if (!data.c) return null
+                const price = parseFloat(data.c)
+                return isNaN(price) ? null : price
+            }
+            case 'alphavantage': {
+                const data = priceData as AlphaVantageCurrentPriceSearchResponse
+                if (!data['Global Quote'] || !data['Global Quote']['05. price']) return null
+                const price = parseFloat(data['Global Quote']['05. price'])
+                return isNaN(price) ? null : price
+            }
+            case 'coingecko': {
+                const data = priceData as CoinGeckoCurrentPriceSearchResponse
+                if (!data[assetIdentifier as keyof typeof data] || !data[assetIdentifier as keyof typeof data].usd) {
+                    return null
+                }
+                const price = data[assetIdentifier as keyof typeof data].usd
+                return typeof price === 'number' && !isNaN(price) ? price : null
+            }
+            case 'coinpaprika': {
+                const data = priceData as CoinPaprikaCurrentPriceSearchResponse
+                if (!data.quotes?.USD?.price) return null
+                const price = data.quotes.USD.price
+                return typeof price === 'number' && !isNaN(price) ? price : null
+            }
+            default:
+                console.warn(`Unknown provider: ${provider}`)
+                return null
+        }
+    } catch (error) {
+        console.warn(`Error transforming price data for ${provider}:`, error)
+        return null
+    }
 }

@@ -69,7 +69,6 @@ export function SearchField({
     }
 
     console.log('selectedResult: ', selectedResult)
-    console.log('type', selectedResult?.type)
 
     const handleClearInput = () => {
         setSearchString('')

@@ -1,6 +1,6 @@
 import type { AssetType } from '@/types/commonTypes'
-import type { APIProvider, SearchResult, DataSearchResults } from './transaction.types'
-import { transformSearchResults } from './transaction.utils'
+import type { APIProvider, SearchResult, DataSearchResults, AssetIdentifier, AssetPrice } from './transaction.types'
+import { transformSearchResults, transformCurrentPriceSearchResults } from './transaction.utils'
 import { CRYPTO_PROVIDERS, BOND_PROVIDERS, STOCK_ETF_PROVIDERS, API_CONFIGS, API_KEYS } from './transaction.config'
 
 // Search function with fallback
@@ -43,4 +43,29 @@ const searchWithProvider = async (
     const results = data as DataSearchResults
 
     return transformSearchResults(results, assetType, provider)
+}
+
+export const searchCurrentPrice = async (
+    assetIdentifier: AssetIdentifier,
+    provider: APIProvider,
+): Promise<AssetPrice> => {
+    const config = API_CONFIGS[provider]
+    const apiKey = API_KEYS[provider]
+    const url = config.endpoints.currentPrice(assetIdentifier, apiKey)
+
+    try {
+        const response = await fetch(url)
+        if (!response.ok) {
+            console.warn(`API request failed with status ${response.status} for ${provider}`)
+            return null
+        }
+
+        const priceData = await response.json()
+        console.log('in func data', priceData)
+
+        return transformCurrentPriceSearchResults(priceData, assetIdentifier, provider)
+    } catch (error) {
+        console.warn(`Search FAILED with ${provider}:`, error)
+        return null
+    }
 }

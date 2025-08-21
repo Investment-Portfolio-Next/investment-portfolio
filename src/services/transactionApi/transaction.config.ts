@@ -54,7 +54,7 @@ export const API_CONFIGS: Record<APIProvider, APIConfig> = {
         limit: Infinity,
         endpoints: {
             search: (query) => `https://api.coinpaprika.com/v1/search?q=${encodeURIComponent(query)}`,
-            currentPrice: (symbol) => `https://api.coinpaprika.com/v1/tickers/${symbol}`, // coin id from search should be used; quotes.USD.price
+            currentPrice: (id) => `https://api.coinpaprika.com/v1/tickers/${id}`, // coin id from search should be used; quotes.USD.price
         },
     },
     bondbase: {

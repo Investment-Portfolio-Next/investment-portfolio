@@ -34,11 +34,6 @@ export interface SearchResult {
 //     timestamp: number
 // }
 
-// export interface AssetDetails extends SearchResult {
-//     currentPrice?: PriceData
-//     isin?: string
-// }
-
 // API Response types for different providers
 
 export type DataSearchResults =
@@ -92,7 +87,6 @@ export interface AlphaVantageSearchResponse {
     bestMatches: AlphaVantageSearchResult[]
 }
 
-// crypto
 // coingecko
 export interface CoinGeckoSearchResult {
     id: string // should be used for further requests
@@ -114,4 +108,47 @@ export interface CoinPaprikaSearchResult {
 
 export interface CoinPaprikaSearchResponse {
     currencies: CoinPaprikaSearchResult[]
+}
+
+//----------------------------
+export type AssetPrice = number | null
+
+export type CurrentPriceSearchUnion =
+    | TwelveDataCurrentPriceSearchResponse
+    | FinnhubCurrentPriceSearchResponse
+    | AlphaVantageCurrentPriceSearchResponse
+    | CoinGeckoCurrentPriceSearchResponse
+    | CoinPaprikaCurrentPriceSearchResponse
+
+// twelvedata
+export interface TwelveDataCurrentPriceSearchResponse {
+    price: string
+}
+
+// finnhub
+export interface FinnhubCurrentPriceSearchResponse {
+    c: string
+}
+
+// alphavantage
+export interface AlphaVantageCurrentPriceSearchResponse {
+    'Global Quote': {
+        '05. price': string
+    }
+}
+
+// coingecko
+export interface CoinGeckoCurrentPriceSearchResponse {
+    [key: string]: {
+        usd: number
+    }
+}
+
+// coinpaprika
+export interface CoinPaprikaCurrentPriceSearchResponse {
+    quotes: {
+        USD: {
+            price: number
+        }
+    }
 }
