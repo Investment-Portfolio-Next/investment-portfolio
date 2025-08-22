@@ -1,8 +1,14 @@
 import { queryClient } from '../queryClient'
 import type { AssetIdentifier, APIProvider } from '../transactionApi/transaction.types'
-import { searchCurrentPrice } from '../transactionApi/apiSearchISIN'
+import { searchAssets, searchCurrentPrice } from '../transactionApi/apiSearchISIN'
+import type { AssetType } from '@/types/commonTypes'
 
 export const assetQueries = {
+    assetSearch: (query: string, assetType: AssetType) => ({
+        queryKey: ['assetSearch', query, assetType],
+        queryFn: () => searchAssets(query, assetType),
+    }),
+
     currentPrice: (assetIdentifier: AssetIdentifier, provider: APIProvider) => ({
         queryKey: ['currentPriceSearch', assetIdentifier, provider],
         queryFn: () => searchCurrentPrice(assetIdentifier, provider),

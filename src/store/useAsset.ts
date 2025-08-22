@@ -22,7 +22,7 @@ interface AssetState {
     isLoading: boolean
     error: string | null
     setAsset: (selectedAsset: SearchResult) => void
-    fetchCurrentPrice: () => Promise<void>
+    getCurrentPrice: () => Promise<void>
     clearAsset: () => void
 }
 
@@ -43,9 +43,10 @@ export const useAsset = create<AssetState>((set, get) => ({
         }
 
         set({ asset: newAsset })
-        get().fetchCurrentPrice()
+        get().getCurrentPrice()
     },
-    fetchCurrentPrice: async () => {
+
+    getCurrentPrice: async () => {
         set({ isLoading: true, error: null })
 
         const { asset } = get()
@@ -86,5 +87,6 @@ export const useAsset = create<AssetState>((set, get) => ({
             })
         }
     },
+
     clearAsset: () => set({ asset: null, isLoading: false, error: null }),
 }))

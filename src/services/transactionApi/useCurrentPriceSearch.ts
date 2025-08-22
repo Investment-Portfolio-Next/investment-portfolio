@@ -4,7 +4,7 @@ import { assetQueries } from '../queries/assetQueries'
 
 export const useCurrentPriceSearch = (assetIdentifier: AssetIdentifier, provider: APIProvider) => {
     return useQuery({
-        ...assetQueries.currentPrice(assetIdentifier!, provider!),
+        ...assetQueries.currentPrice(assetIdentifier, provider),
         enabled: !!assetIdentifier && !!provider,
     })
 }
