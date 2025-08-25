@@ -11,7 +11,12 @@ export interface APIConfig {
     endpoints: {
         search: (query: string, apiKey: string) => string
         currentPrice: (symbol: string, apiKey: string) => string
-        historicalPrice?: (identifier: AssetIdentifier, dateBefore?: string, date?: string, apiKey?: string) => string
+        historicalPrice?: (
+            identifier: AssetIdentifier,
+            date: number | string,
+            dateBefore?: number | string,
+            apiKey?: string,
+        ) => string
     }
 }
 
@@ -149,6 +154,37 @@ export interface CoinPaprikaCurrentPriceSearchResponse {
     quotes: {
         USD: {
             price: number
+        }
+    }
+}
+
+//---------------------
+export type TransactionDate = number | string
+
+export type SearchHistoricalPriceResultUnion =
+    | HistoricalPriceResultTwelvedata
+    | HistoricalPriceResultAlphavantage
+    | HistoricalPriceResultCoingecko
+
+export interface HistoricalPriceResultTwelvedata {
+    values: [
+        {
+            datetime: string
+            close: string
+        },
+    ]
+}
+export interface HistoricalPriceResultAlphavantage {
+    'Time Series (Daily)': {
+        [key: string]: {
+            '4. close': string
+        }
+    }
+}
+export interface HistoricalPriceResultCoingecko {
+    market_data: {
+        current_price: {
+            usd: number
         }
     }
 }

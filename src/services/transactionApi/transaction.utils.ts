@@ -21,8 +21,15 @@ import type {
     AlphaVantageCurrentPriceSearchResponse,
     CoinGeckoCurrentPriceSearchResponse,
     CoinPaprikaCurrentPriceSearchResponse,
+    TransactionDate,
+    SearchHistoricalPriceResultUnion,
+    HistoricalPriceResultTwelvedata,
+    HistoricalPriceResultAlphavantage,
+    HistoricalPriceResultCoingecko,
 } from './transaction.types'
 import type { AssetType } from '@/types/commonTypes'
+import { formatDateToInput } from '@/utils/helper'
+import { API_CONFIGS, API_KEYS } from './transaction.config'
 
 const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean => {
     const type = instrumentType.toLowerCase()
@@ -116,7 +123,7 @@ const shouldShowSearchItem = (result: SearchResultUnion, assetType: AssetType, p
     return matchesAssetType(instrumentType, assetType)
 }
 
-const transformResult = (result: SearchResultUnion, provider: APIProvider): SearchResult => {
+const transformSearchResult = (result: SearchResultUnion, provider: APIProvider): SearchResult => {
     switch (provider) {
         case 'twelvedata': {
             const res = result as TwelveDataSearchResult
@@ -183,49 +190,71 @@ export const transformSearchResults = (
 
     return resultArr
         .filter((result) => shouldShowSearchItem(result, assetType, provider))
-        .map((result) => transformResult(result, provider))
+        .map((result) => transformSearchResult(result, provider))
 }
 
 // --------------------------------------------------
+const parsePrice = (value: unknown): number | null => {
+    if (value === null || value === undefined || value === '') {
+        return null
+    }
+
+    const price = typeof value === 'string' ? parseFloat(value) : Number(value)
+
+    if (isNaN(price) || !isFinite(price) || price <= 0) {
+        return null
+    }
+
+    return price
+}
+
+const isValidPrice = (price: unknown): price is number => {
+    return typeof price === 'number' && isFinite(price) && price > 0
+}
 
 export const transformCurrentPriceSearchResults = (
     priceData: CurrentPriceSearchUnion,
     assetIdentifier: AssetIdentifier,
     provider: APIProvider,
 ): AssetPrice => {
+    if (!priceData || typeof priceData !== 'object') {
+        console.warn(`Invalid price data received for ${provider}`)
+        return null
+    }
     try {
         switch (provider) {
             case 'twelvedata': {
                 const data = priceData as TwelveDataCurrentPriceSearchResponse
                 if (!data.price) return null
-                const price = parseFloat(data.price)
-                return isNaN(price) ? null : price
+                return parsePrice(data.price)
             }
             case 'finnhub': {
                 const data = priceData as FinnhubCurrentPriceSearchResponse
-                if (!data.c) return null
-                const price = parseFloat(data.c)
-                return isNaN(price) ? null : price
+                if (data.c === undefined || data.c === null) return null
+                return parsePrice(data.c)
             }
             case 'alphavantage': {
                 const data = priceData as AlphaVantageCurrentPriceSearchResponse
                 if (!data['Global Quote'] || !data['Global Quote']['05. price']) return null
-                const price = parseFloat(data['Global Quote']['05. price'])
-                return isNaN(price) ? null : price
+                return parsePrice(data['Global Quote']['05. price'])
             }
             case 'coingecko': {
                 const data = priceData as CoinGeckoCurrentPriceSearchResponse
-                if (!data[assetIdentifier as keyof typeof data] || !data[assetIdentifier as keyof typeof data].usd) {
+                const coinData = data[assetIdentifier as keyof typeof data]
+                if (!coinData || typeof coinData !== 'object' || !('usd' in coinData) || !isValidPrice(coinData.usd))
                     return null
-                }
-                const price = data[assetIdentifier as keyof typeof data].usd
-                return typeof price === 'number' && !isNaN(price) ? price : null
+                return coinData.usd
+                // if (!data[assetIdentifier as keyof typeof data] || !data[assetIdentifier as keyof typeof data].usd) {
+                //     return null
+                // }
+                // const price = data[assetIdentifier as keyof typeof data].usd
+                // return typeof price === 'number' && !isNaN(price) ? price : null
             }
             case 'coinpaprika': {
                 const data = priceData as CoinPaprikaCurrentPriceSearchResponse
                 if (!data.quotes?.USD?.price) return null
                 const price = data.quotes.USD.price
-                return typeof price === 'number' && !isNaN(price) ? price : null
+                return isValidPrice(price) ? price : null
             }
             default:
                 console.warn(`Unknown provider: ${provider}`)
@@ -233,6 +262,108 @@ export const transformCurrentPriceSearchResults = (
         }
     } catch (error) {
         console.warn(`Error transforming price data for ${provider}:`, error)
+        return null
+    }
+}
+
+//---------------------------------------------------------
+
+export const transformDataForUrl = (
+    assetIdentifier: AssetIdentifier,
+    provider: APIProvider,
+    date: TransactionDate,
+): string | null => {
+    if (!assetIdentifier || !provider || !date) {
+        console.warn('Missing required parameters for URL transformation')
+        return null
+    }
+
+    const config = API_CONFIGS[provider]
+    const apiKey = API_KEYS[provider]
+
+    switch (provider) {
+        case 'twelvedata': {
+            const nextDateObj = new Date(date)
+            nextDateObj.setDate(nextDateObj.getDate() + 1)
+            const nextDate = formatDateToInput(nextDateObj)
+
+            if (!config.endpoints.historicalPrice) return null
+
+            return config.endpoints.historicalPrice(assetIdentifier, date, nextDate, apiKey)
+        }
+        case 'finnhub': {
+            console.warn('Historical prices not supported for Finnhub')
+            return null
+        }
+        case 'alphavantage': {
+            if (!config.endpoints.historicalPrice) return null
+
+            return config.endpoints.historicalPrice(assetIdentifier, apiKey)
+        }
+        case 'coingecko': {
+            if (!config.endpoints.historicalPrice) return null
+
+            return config.endpoints.historicalPrice(assetIdentifier, date)
+        }
+        case 'coinpaprika': {
+            console.warn('Historical prices not supported for CoinPaprika')
+            return null
+        }
+        default:
+            console.warn(`Error creating URL for ${provider}`)
+            return null
+    }
+}
+
+export const transformHistoricalPriceSearchResults = (
+    historicalData: SearchHistoricalPriceResultUnion,
+    date: TransactionDate,
+    provider: APIProvider,
+) => {
+    if (!historicalData || typeof historicalData !== 'object' || !date) return null
+
+    try {
+        switch (provider) {
+            case 'twelvedata': {
+                const data = historicalData as HistoricalPriceResultTwelvedata
+
+                if (
+                    !data.values ||
+                    !Array.isArray(data.values) ||
+                    !data.values[0].close ||
+                    data.values[0].datetime !== date
+                )
+                    return null
+                return parsePrice(data.values[0].close)
+                // const price = data.values[0].datetime === date ? parseFloat(data.values[0].close) : null
+                // return !price || isNaN(price) ? null : price
+            }
+
+            case 'alphavantage': {
+                const data = historicalData as HistoricalPriceResultAlphavantage
+
+                if (!data['Time Series (Daily)']) return null
+                const dayData = data['Time Series (Daily)'][date]
+
+                if (!dayData || !dayData['4. close']) return null
+
+                return parsePrice(dayData['4. close'])
+            }
+            case 'coingecko': {
+                const data = historicalData as HistoricalPriceResultCoingecko
+
+                if (!data.market_data?.current_price?.usd) return null
+
+                const price = data.market_data.current_price.usd
+                return isValidPrice(price) ? price : null
+            }
+
+            default:
+                console.warn(`Unknown provider for historical data: ${provider}`)
+                return null
+        }
+    } catch (error) {
+        console.warn(`Error transforming historical price data for ${provider}:`, error)
         return null
     }
 }

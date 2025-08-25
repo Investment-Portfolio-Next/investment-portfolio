@@ -1,6 +1,18 @@
 import type { AssetType } from '@/types/commonTypes'
-import type { APIProvider, SearchResult, DataSearchResults, AssetIdentifier, AssetPrice } from './transaction.types'
-import { transformSearchResults, transformCurrentPriceSearchResults } from './transaction.utils'
+import type {
+    APIProvider,
+    SearchResult,
+    DataSearchResults,
+    AssetIdentifier,
+    AssetPrice,
+    TransactionDate,
+} from './transaction.types'
+import {
+    transformSearchResults,
+    transformCurrentPriceSearchResults,
+    transformHistoricalPriceSearchResults,
+    transformDataForUrl,
+} from './transaction.utils'
 import { CRYPTO_PROVIDERS, BOND_PROVIDERS, STOCK_ETF_PROVIDERS, API_CONFIGS, API_KEYS } from './transaction.config'
 
 // Search function with fallback
@@ -53,19 +65,79 @@ export const searchCurrentPrice = async (
     const apiKey = API_KEYS[provider]
     const url = config.endpoints.currentPrice(assetIdentifier, apiKey)
 
+    if (!url) {
+        throw new Error('No price is available on this date')
+    }
+
     try {
         const response = await fetch(url)
+
         if (!response.ok) {
-            console.warn(`API request failed with status ${response.status} for ${provider}`)
-            return null
+            const errorMessage =
+                response.status === 404 ? 'Asset not found' : `API request failed with status ${response.status}`
+
+            console.warn(`${errorMessage} for ${provider}`)
+            throw new Error('No price is available on this date')
         }
 
         const priceData = await response.json()
-        console.log('in func data', priceData)
 
-        return transformCurrentPriceSearchResults(priceData, assetIdentifier, provider)
+        const transformedPrice = transformCurrentPriceSearchResults(priceData, assetIdentifier, provider)
+
+        if (transformedPrice === null) {
+            throw new Error('No price is available on this date')
+        }
+
+        return transformedPrice
     } catch (error) {
-        console.warn(`Search FAILED with ${provider}:`, error)
-        return null
+        if (error instanceof Error) {
+            throw error
+        }
+
+        console.warn(`Price search failed for ${provider}:`, error)
+        throw new Error('No price is available on this date')
+    }
+}
+
+export const searchHistoricalPrice = async (
+    assetIdentifier: AssetIdentifier,
+    provider: APIProvider,
+    date: TransactionDate,
+): Promise<AssetPrice> => {
+    try {
+        const url = transformDataForUrl(assetIdentifier, provider, date)
+        if (!url) {
+            console.warn(`Historical price not supported for provider ${provider}`)
+            throw new Error('No price is available on this date')
+        }
+
+        const response = await fetch(url)
+
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 404 || response.status === 400
+                    ? 'No data is available on the specified date'
+                    : `API request failed with status ${response.status}`
+
+            console.warn(`Historical price error for ${provider}:`, errorMessage)
+            throw new Error('No price is available on this date')
+        }
+
+        const historicalData = await response.json()
+
+        const historicalPrice = transformHistoricalPriceSearchResults(historicalData, date, provider)
+
+        if (historicalPrice === null) {
+            throw new Error('No price is available on this date')
+        }
+
+        return historicalPrice
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error
+        }
+
+        console.warn(`Historical price search failed for ${provider}:`, error)
+        throw new Error('No price is available on this date')
     }
 }

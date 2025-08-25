@@ -10,8 +10,8 @@ export const API_CONFIGS: Record<APIProvider, APIConfig> = {
             search: (query, apiKey) =>
                 `https://api.twelvedata.com/symbol_search?symbol=${encodeURIComponent(query)}&apikey=${apiKey}`,
             currentPrice: (symbol, apiKey) => `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`,
-            historicalPrice: (symbol, dateBefore, date, apiKey) =>
-                `https://api.twelvedata.com/time_series?symbol=${symbol}&interval=1day&start_date=${dateBefore}&end_date=${date}&apikey=${apiKey}`, // dateBefore, date - Unix timestamp
+            historicalPrice: (symbol, date, nextDate, apiKey) =>
+                `https://api.twelvedata.com/time_series?symbol=${symbol}&interval=1day&start_date=${date}&end_date=${nextDate}&apikey=${apiKey}`,
         },
     },
     finnhub: {

@@ -22,7 +22,7 @@ interface TransactionsFormProps {
 }
 
 export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
-    const { asset, isLoading } = useAsset()
+    const { asset, isLoadingPrice, priceError, setNewDate } = useAsset()
 
     const today = formatDateToInput(new Date())
 
@@ -101,7 +101,14 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 <Field
                     label="Date"
                     type="date"
-                    registration={register('transactionDate', validations.transactionDate)}
+                    // registration={register('transactionDate', validations.transactionDate)}
+                    registration={{
+                        ...register('transactionDate', validations.transactionDate),
+                        onChange: async (e) => {
+                            await register('transactionDate').onChange(e)
+                            setNewDate(e.target.value)
+                        },
+                    }}
                     error={errors.transactionDate?.message}
                 />
             </div>
@@ -112,8 +119,10 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     type="number"
                     step="any"
                     registration={register('initialPrice', validations.initialPrice)}
-                    error={errors.initialPrice?.message}
-                    value={isLoading ? '0000' : asset?.price || ''} // TODO: add loader instead of 0000 here
+                    error={errors.initialPrice?.message || (priceError ?? '')}
+                    value={isLoadingPrice ? '0000' : asset?.price || ''} // TODO: add loader instead of 0000 here
+                    // TODO: add possibility to put price manually
+                    // placeholder={priceError ?? ''}
                 />
                 <Field
                     label="Commission"
