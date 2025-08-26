@@ -25,6 +25,7 @@ interface AssetState {
     priceError: string | null
     setAsset: (selectedAsset: SearchResult) => void
     setNewDate: (newDate: TransactionDate) => void
+    setManualPrice: (price: AssetPrice) => void
     getCurrentPrice: () => Promise<void>
     getHistoricalPrice: (newDate: TransactionDate) => Promise<void>
     clearAsset: () => void
@@ -61,10 +62,23 @@ export const useAsset = create<AssetState>((set, get) => ({
 
         const today = formatDateToInput(new Date())
 
-        if (newDate !== today) {
+        if (newDate < today) {
             get().getHistoricalPrice(newDate)
-        } else {
+        } else if (newDate === today) {
             get().getCurrentPrice()
+        } else {
+            return
+        }
+    },
+
+    setManualPrice: (price: AssetPrice) => {
+        const { asset } = get()
+        if (asset) {
+            set({
+                asset: { ...asset, price },
+                priceError: null,
+                isLoadingPrice: false,
+            })
         }
     },
 
@@ -103,7 +117,7 @@ export const useAsset = create<AssetState>((set, get) => ({
             set({
                 asset: { ...asset, price: null },
                 isLoadingPrice: false,
-                priceError: error instanceof Error ? error.message : 'No price is available on this date',
+                priceError: 'No price is available on this date',
             })
         }
     },
@@ -143,7 +157,7 @@ export const useAsset = create<AssetState>((set, get) => ({
             set({
                 asset: { ...asset, price: null },
                 isLoadingPrice: false,
-                priceError: error instanceof Error ? error.message : 'No price is available on this date',
+                priceError: 'No price is available on this date',
             })
         }
     },

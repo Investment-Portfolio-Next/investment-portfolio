@@ -65,9 +65,7 @@ export const searchCurrentPrice = async (
     const apiKey = API_KEYS[provider]
     const url = config.endpoints.currentPrice(assetIdentifier, apiKey)
 
-    if (!url) {
-        throw new Error('No price is available on this date')
-    }
+    if (!url) throw new Error('No price is available on this date')
 
     try {
         const response = await fetch(url)
@@ -84,9 +82,7 @@ export const searchCurrentPrice = async (
 
         const transformedPrice = transformCurrentPriceSearchResults(priceData, assetIdentifier, provider)
 
-        if (transformedPrice === null) {
-            throw new Error('No price is available on this date')
-        }
+        if (transformedPrice === null) throw new Error('No price is available on this date')
 
         return transformedPrice
     } catch (error) {
@@ -127,9 +123,7 @@ export const searchHistoricalPrice = async (
 
         const historicalPrice = transformHistoricalPriceSearchResults(historicalData, date, provider)
 
-        if (historicalPrice === null) {
-            throw new Error('No price is available on this date')
-        }
+        if (historicalPrice === null) throw new Error('No price is available on this date')
 
         return historicalPrice
     } catch (error) {

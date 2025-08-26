@@ -1,5 +1,5 @@
 'use client'
-
+import { useEffect } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { Field } from '@/components/ui/form/field/Field'
 import { SelectField } from '@/components/ui/form/selectField/SelectField'
@@ -22,18 +22,17 @@ interface TransactionsFormProps {
 }
 
 export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
-    const { asset, isLoadingPrice, priceError, setNewDate } = useAsset()
+    const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice } = useAsset()
 
     const today = formatDateToInput(new Date())
 
-    // TODO: заменить временные значения на реальные
-    const accountOpenDate = new Date('2020-01-01') //дата открытия счета
-    const assetQuantityLimit = 1000 // кол-во конкретного ассета - после сабмита с бека
+    const accountOpenDate = new Date('2020-01-01') //TODO: set real data later: date of account creation
+    const assetQuantityLimit = 1000 // TODO: check if the limit is necessary
     const isBond = assetType === 'bond'
 
     const validations = getValidationRules({
         accountOpenDate,
-        assetQuantityLimit,
+        assetQuantityLimit, // TODO: check if the limit is necessary
         isBond,
     })
 
@@ -43,13 +42,15 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         formState: { errors },
         reset,
         control,
+        setValue,
+        clearErrors,
     } = useForm<ITransactionForm>({
         mode: 'onChange',
         defaultValues: {
             transactionType: 'buy',
             transactionCurrency: 'USD',
             transactionDate: today,
-            initialPrice: 0, // TODO: fix initial price
+            initialPrice: 0,
             transactionCommision: 0,
             transactionQuantity: 1,
             bondNominal: 0,
@@ -65,6 +66,28 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     const commission = useWatch({ control, name: 'transactionCommision' })
     const accruedInterest = useWatch({ control, name: 'bondAccruedInterest' })
     const accruedPerBond = useWatch({ control, name: 'isAccruedInterestPerBond' })
+
+    useEffect(() => {
+        if (asset?.price !== null && asset?.price !== undefined) {
+            setValue('initialPrice', asset.price)
+        } else if (asset && asset.price === null) {
+            setValue('initialPrice', 0)
+        }
+    }, [asset?.price, setValue, asset])
+
+    const handleClearPrice = () => {
+        setValue('initialPrice', 0)
+        clearPriceError()
+        clearErrors('initialPrice')
+    }
+
+    const handlePriceChange = (e: { target: { value: string; name: string } }) => {
+        const newPrice = e.target.value ? parseFloat(e.target.value) : 0
+
+        if (asset && !isLoadingPrice) {
+            setManualPrice(newPrice)
+        }
+    }
 
     const onSubmit: SubmitHandler<ITransactionForm> = (data) => {
         const submissionData = {
@@ -83,8 +106,8 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 label="Asset ID"
                 type="text"
                 registration={register('symbolID', validations.symbolID)}
-                // error={errors.symbolID?.message}
                 assetType={assetType}
+                resetForm={reset}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField
@@ -101,7 +124,6 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 <Field
                     label="Date"
                     type="date"
-                    // registration={register('transactionDate', validations.transactionDate)}
                     registration={{
                         ...register('transactionDate', validations.transactionDate),
                         onChange: async (e) => {
@@ -118,10 +140,16 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     label="Price"
                     type="number"
                     step="any"
-                    registration={register('initialPrice', validations.initialPrice)}
+                    registration={{
+                        ...register('initialPrice', validations.initialPrice),
+                        onChange: async (e) => {
+                            await register('initialPrice').onChange(e)
+                            handlePriceChange(e)
+                        },
+                    }}
                     error={errors.initialPrice?.message || (priceError ?? '')}
-                    value={isLoadingPrice ? '0000' : asset?.price || ''} // TODO: add loader instead of 0000 here
-                    // TODO: add possibility to put price manually
+                    isLoadingPrice={isLoadingPrice}
+                    handleClearPrice={handleClearPrice}
                     // placeholder={priceError ?? ''}
                 />
                 <Field
@@ -165,7 +193,6 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 registration={register('notes', validations.notes)}
                 error={errors.notes?.message}
                 placeholder="You can add a comment for a transaction (optional)"
-                value={asset?.type || ''} // for testing
             />
 
             <div className="flex justify-between mt-2">

@@ -15,7 +15,7 @@ interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
     registration: UseFormRegisterReturn
     variant?: FieldVariant
     assetType: AssetType
-    onSelect?: (isin: string) => void
+    resetForm: () => void
 }
 
 export function SearchField({
@@ -23,7 +23,8 @@ export function SearchField({
     registration,
     variant = 'primary',
     assetType,
-    onSelect,
+    resetForm,
+
     ...inputProps
 }: SearchFieldProps) {
     const styles = variantStyles[variant]
@@ -34,7 +35,7 @@ export function SearchField({
 
     const debouncedSearchString = useDebounce(searchString, 1000)
 
-    const { asset: selectedResult, setAsset, clearAsset } = useAsset()
+    const { setAsset, clearAsset } = useAsset()
 
     const {
         data: searchResults,
@@ -49,6 +50,7 @@ export function SearchField({
         setHasUserSelected(false)
         clearAsset()
         setShowResults(true)
+        resetForm()
         registration.onChange(e) // Update form registration value
     }
 
@@ -63,25 +65,18 @@ export function SearchField({
         registration.onChange({
             target: { value: selectedValue, name: registration.name },
         } as React.ChangeEvent<HTMLInputElement>)
-
-        // TODO: Call onSelect callback
-        onSelect?.(selectedValue)
     }
-
-    console.log('selectedResult: ', selectedResult)
 
     const handleClearInput = () => {
         setSearchString('')
         clearAsset()
+        resetForm()
         setShowResults(false)
 
         // Clear the form registration
         registration.onChange({
             target: { value: '', name: registration.name },
         } as React.ChangeEvent<HTMLInputElement>)
-
-        // TODO: Call onSelect callback with empty value
-        onSelect?.('')
     }
 
     const handleInputBlur = () => {

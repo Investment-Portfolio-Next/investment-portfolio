@@ -244,11 +244,6 @@ export const transformCurrentPriceSearchResults = (
                 if (!coinData || typeof coinData !== 'object' || !('usd' in coinData) || !isValidPrice(coinData.usd))
                     return null
                 return coinData.usd
-                // if (!data[assetIdentifier as keyof typeof data] || !data[assetIdentifier as keyof typeof data].usd) {
-                //     return null
-                // }
-                // const price = data[assetIdentifier as keyof typeof data].usd
-                // return typeof price === 'number' && !isNaN(price) ? price : null
             }
             case 'coinpaprika': {
                 const data = priceData as CoinPaprikaCurrentPriceSearchResponse
@@ -335,8 +330,6 @@ export const transformHistoricalPriceSearchResults = (
                 )
                     return null
                 return parsePrice(data.values[0].close)
-                // const price = data.values[0].datetime === date ? parseFloat(data.values[0].close) : null
-                // return !price || isNaN(price) ? null : price
             }
 
             case 'alphavantage': {
