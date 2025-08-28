@@ -7,7 +7,7 @@ import { X } from 'lucide-react'
 interface ModalProps {
     isOpen: boolean
     onClose: () => void
-    modalTitle: string
+    modalTitle?: string
     children: React.ReactNode
 }
 
@@ -32,7 +32,7 @@ export function Modal({ isOpen, onClose, modalTitle, children }: ModalProps) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-            <div className="relative bg-modalBg border-2 border-primaryLight p-8 rounded-xl w-full max-w-2xl shadow-custom-green">
+            <div className="relative bg-modalBg border-2 border-primaryLight p-8 rounded-xl  max-w-2xl shadow-custom-green">
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-white/80 hover:text-primary"
