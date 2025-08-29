@@ -36,6 +36,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         isBond,
     })
 
+    console.log(validations)
     const {
         register,
         handleSubmit,
@@ -50,11 +51,11 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             transactionType: 'buy',
             transactionCurrency: 'USD',
             transactionDate: today,
-            initialPrice: 0,
-            transactionCommision: 0,
-            transactionQuantity: 1,
-            bondNominal: 0,
-            bondAccruedInterest: 0,
+            initialPrice: null,
+            transactionCommision: null,
+            transactionQuantity: null,
+            bondNominal: null,
+            bondAccruedInterest: null,
             isAccruedInterestPerBond: true,
         },
     })
@@ -63,7 +64,9 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     const currency = useWatch({ control, name: 'transactionCurrency' })
     const price = useWatch({ control, name: 'initialPrice' })
     const quantity = useWatch({ control, name: 'transactionQuantity' })
+    const dateOfTransaction = useWatch({ control, name: 'transactionDate' })
     const commission = useWatch({ control, name: 'transactionCommision' })
+    const bondNominal = useWatch({ control, name: 'bondNominal' })
     const accruedInterest = useWatch({ control, name: 'bondAccruedInterest' })
     const accruedPerBond = useWatch({ control, name: 'isAccruedInterestPerBond' })
 
@@ -71,18 +74,18 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         if (asset?.price !== null && asset?.price !== undefined) {
             setValue('initialPrice', asset.price)
         } else if (asset && asset.price === null) {
-            setValue('initialPrice', 0)
+            setValue('initialPrice', null)
         }
     }, [asset?.price, setValue, asset])
 
-    const handleClearPrice = () => {
-        setValue('initialPrice', 0)
-        clearPriceError()
-        clearErrors('initialPrice')
+    const handleClearValue = (fieldName: string): void => {
+        setValue(fieldName, null)
+        clearErrors(fieldName)
+        if (fieldName === 'initialPrice') clearPriceError()
     }
 
     const handlePriceChange = (e: { target: { value: string; name: string } }) => {
-        const newPrice = e.target.value ? parseFloat(e.target.value) : 0
+        const newPrice = e.target.value ? parseFloat(e.target.value) : null
 
         if (asset && !isLoadingPrice) {
             setManualPrice(newPrice)
@@ -108,6 +111,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 registration={register('symbolID', validations.symbolID)}
                 assetType={assetType}
                 resetForm={reset}
+                errors={errors.symbolID?.message}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField
@@ -119,7 +123,9 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     label="Quantity"
                     type="number"
                     registration={register('transactionQuantity', validations.transactionQuantity)}
-                    error={errors.transactionQuantity?.message}
+                    errors={errors.transactionQuantity?.message}
+                    fieldValue={quantity}
+                    handleClearValue={handleClearValue}
                 />
                 <Field
                     label="Date"
@@ -131,7 +137,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                             setNewDate(e.target.value)
                         },
                     }}
-                    error={errors.transactionDate?.message}
+                    errors={errors.transactionDate?.message}
                 />
             </div>
 
@@ -147,17 +153,20 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                             handlePriceChange(e)
                         },
                     }}
-                    error={errors.initialPrice?.message || (priceError ?? '')}
+                    errors={errors.initialPrice?.message || (priceError ?? '')}
                     isLoadingPrice={isLoadingPrice}
-                    handleClearPrice={handleClearPrice}
-                    // placeholder={priceError ?? ''}
+                    fieldValue={price}
+                    handleClearValue={handleClearValue}
+                    // placeholder={'0'}
                 />
                 <Field
                     label="Commission"
                     type="number"
                     step="any"
                     registration={register('transactionCommision', validations.transactionCommision)}
-                    error={errors.transactionCommision?.message}
+                    errors={errors.transactionCommision?.message}
+                    fieldValue={commission}
+                    handleClearValue={handleClearValue}
                 />
                 <SelectField
                     label="Currency"
@@ -173,14 +182,18 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                         type="number"
                         step="any"
                         registration={register('bondNominal', validations.bondNominal)}
-                        error={errors.bondNominal?.message}
+                        errors={errors.bondNominal?.message}
+                        fieldValue={bondNominal}
+                        handleClearValue={handleClearValue}
                     />
                     <Field
                         label="Accrued Interest (AI)"
                         type="number"
                         step="any"
                         registration={register('bondAccruedInterest', validations.bondAccruedInterest)}
-                        error={errors.bondAccruedInterest?.message}
+                        errors={errors.bondAccruedInterest?.message}
+                        fieldValue={accruedInterest}
+                        handleClearValue={handleClearValue}
                     />
                     <div className="flex pb-3 w-full h-full justify-start items-end">
                         <Checkbox label="AI per Bond" registration={register('isAccruedInterestPerBond')} />
@@ -191,7 +204,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             <TextareaField
                 label="Notes"
                 registration={register('notes', validations.notes)}
-                error={errors.notes?.message}
+                errors={errors.notes?.message}
                 placeholder="You can add a comment for a transaction (optional)"
             />
 

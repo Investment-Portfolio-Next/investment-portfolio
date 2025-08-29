@@ -7,20 +7,22 @@ import { X, LoaderCircle } from 'lucide-react'
 
 interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string
-    error?: string
+    errors?: string
     registration: UseFormRegisterReturn
     isLoadingPrice?: boolean
-    handleClearPrice?: () => void
+    handleClearValue?: (fieldName: string) => void
     variant?: FieldVariant
+    fieldValue?: number | null
 }
 
 export function Field({
     label,
-    error,
+    errors,
     registration,
     isLoadingPrice = false,
-    handleClearPrice,
+    handleClearValue,
     variant = 'primary',
+    fieldValue,
     ...props
 }: FieldProps) {
     const styles = variantStyles[variant]
@@ -28,16 +30,17 @@ export function Field({
     const isNumber = props.type === 'number'
     const isPrice = label === 'Price'
 
-    const handleNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-        if (isPrice) return
+    // const handleNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    //     if (isPrice) return
 
-        const value = e.target.value
-        if (value) {
-            const cleaned = String(parseInt(value, 10)) || '0'
-            e.target.value = cleaned
-            e.target.dispatchEvent(new Event('input', { bubbles: true }))
-        }
-    }
+    //     const value = e.target.value
+    //     if (value) {
+    //         const cleaned = String(parseInt(value, 10)) || '0'
+    //         e.target.value = cleaned
+    //         e.target.dispatchEvent(new Event('input', { bubbles: true }))
+    //     }
+    // }
+    const isNotNullValue = fieldValue?.valueOf()
 
     return (
         <div>
@@ -45,26 +48,26 @@ export function Field({
                 <span className="input-label">{label}</span>
                 <div className="relative">
                     <input
-                        className={`h-9 input-basic ${error ? 'border-error focus:border-error' : styles}`}
+                        className={`h-9 input-basic ${errors ? 'border-error focus:border-error' : styles}`}
                         {...registration}
                         {...props}
-                        onBlur={(e) => {
-                            if (isNumber) handleNumberBlur(e)
-                            props.onBlur?.(e)
-                        }}
+                        // onBlur={(e) => {
+                        // if (isNumber) handleNumberBlur(e)
+                        // props.onBlur?.(e)
+                        // }}
                     />
                     {isDate && (
                         <Calendar
                             size={16}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-white pointer-events-none"
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white pointer-events-none"
                         />
                     )}
-                    {isPrice && (
-                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
-                            {!isLoadingPrice && (
+                    {!isDate && handleClearValue && (
+                        <div className="absolute inset-y-0 right-2 flex items-center justify-center">
+                            {!isLoadingPrice && isNotNullValue && (
                                 <button
                                     type="button"
-                                    onClick={handleClearPrice}
+                                    onClick={() => handleClearValue(registration.name)}
                                     className="text-white/80 hover:text-primary "
                                     aria-label="Clear search field"
                                 >
@@ -76,7 +79,7 @@ export function Field({
                     )}
                 </div>
             </label>
-            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{error || '\u00A0'}</p>
+            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{errors || '\u00A0'}</p>
         </div>
     )
 }

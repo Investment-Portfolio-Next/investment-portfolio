@@ -16,6 +16,7 @@ interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
     variant?: FieldVariant
     assetType: AssetType
     resetForm: () => void
+    errors?: string
 }
 
 export function SearchField({
@@ -24,7 +25,7 @@ export function SearchField({
     variant = 'primary',
     assetType,
     resetForm,
-
+    errors,
     ...inputProps
 }: SearchFieldProps) {
     const styles = variantStyles[variant]
@@ -105,12 +106,12 @@ export function SearchField({
                         autoComplete="off"
                         placeholder={`Search for ${assetType}...`}
                     />
-                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
+                    <div className="absolute inset-y-0 right-2 flex items-center justify-center">
                         {searchString && !isLoading && !isFetching && (
                             <button
                                 type="button"
                                 onClick={handleClearInput}
-                                className="text-white/80 hover:text-primary "
+                                className="text-white/80 hover:text-primary"
                                 aria-label="Clear search field"
                             >
                                 <X size={16} />
@@ -140,8 +141,9 @@ export function SearchField({
                 </div>
             )}
 
-            {/* Error Message */}
-            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{error ? error.message : '\u00A0'}</p>
+            <p className="text-error text-xs mt-1 min-h-[1.125rem]">
+                {error ? error.message : errors ? errors : '\u00A0'}
+            </p>
         </div>
     )
 }

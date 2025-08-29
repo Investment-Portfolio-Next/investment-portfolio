@@ -5,11 +5,11 @@ export interface ITransactionForm {
     transactionType: string
     transactionCurrency: CurrencyType
     transactionDate: string
-    initialPrice: number
-    transactionCommision: number
-    transactionQuantity: number
+    initialPrice: number | null
+    transactionCommision: number | null
+    transactionQuantity: number | null
     notes: string
-    bondNominal?: number
-    bondAccruedInterest?: number
+    bondNominal?: number | null
+    bondAccruedInterest?: number | null
     isAccruedInterestPerBond?: boolean
 }
