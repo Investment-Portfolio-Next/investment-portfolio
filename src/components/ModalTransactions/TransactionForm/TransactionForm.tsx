@@ -24,7 +24,7 @@ interface TransactionsFormProps {
 export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
     const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice } = useAsset()
 
-    const today = formatDateToInput(new Date())
+    // const today = formatDateToInput(new Date())
 
     const accountOpenDate = new Date('2020-01-01') //TODO: set real data later: date of account creation
     const assetQuantityLimit = 1000 // TODO: check if the limit is necessary
@@ -35,8 +35,20 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         assetQuantityLimit, // TODO: check if the limit is necessary
         isBond,
     })
+    const defaultValues: ITransactionForm = {
+        symbolID: '',
+        transactionType: 'buy',
+        transactionCurrency: 'USD',
+        transactionDate: formatDateToInput(new Date()),
+        initialPrice: null,
+        transactionCommision: null,
+        transactionQuantity: null,
+        bondNominal: null,
+        bondAccruedInterest: null,
+        isAccruedInterestPerBond: true,
+        notes: '',
+    }
 
-    console.log(validations)
     const {
         register,
         handleSubmit,
@@ -47,17 +59,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         clearErrors,
     } = useForm<ITransactionForm>({
         mode: 'onChange',
-        defaultValues: {
-            transactionType: 'buy',
-            transactionCurrency: 'USD',
-            transactionDate: today,
-            initialPrice: null,
-            transactionCommision: null,
-            transactionQuantity: null,
-            bondNominal: null,
-            bondAccruedInterest: null,
-            isAccruedInterestPerBond: true,
-        },
+        defaultValues,
     })
 
     const typeOfTransaction = useWatch({ control, name: 'transactionType' })
@@ -78,10 +80,27 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         }
     }, [asset?.price, setValue, asset])
 
-    const handleClearValue = (fieldName: string): void => {
-        setValue(fieldName, null)
-        clearErrors(fieldName)
-        if (fieldName === 'initialPrice') clearPriceError()
+    const handleClearValue = (fieldNames: keyof ITransactionForm | (keyof ITransactionForm)[]): void => {
+        const names = Array.isArray(fieldNames) ? fieldNames : [fieldNames]
+        names.forEach((fieldName) => {
+            const defaultValue = defaultValues[fieldName]
+            setValue(fieldName, defaultValue)
+            clearErrors(fieldName)
+            if (fieldName === 'initialPrice') clearPriceError()
+        })
+    }
+
+    const resetFieldsForSearch = (): void => {
+        handleClearValue([
+            'transactionType',
+            'transactionQuantity',
+            'transactionDate',
+            'initialPrice',
+            'transactionCommision',
+            'transactionCurrency',
+            'notes',
+            ...(isBond ? (['bondNominal', 'bondAccruedInterest', 'isAccruedInterestPerBond'] as const) : []),
+        ])
     }
 
     const handlePriceChange = (e: { target: { value: string; name: string } }) => {
@@ -112,6 +131,8 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 assetType={assetType}
                 resetForm={reset}
                 errors={errors.symbolID?.message}
+                hasErrors={!!errors.symbolID}
+                resetFieldsForSearch={resetFieldsForSearch}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField

@@ -4,18 +4,19 @@ import { Calendar } from 'lucide-react'
 import type { FieldVariant } from '@/types/commonTypes'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { X, LoaderCircle } from 'lucide-react'
+import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'
 
-interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
+interface FieldProps<TFieldName extends keyof ITransactionForm> extends InputHTMLAttributes<HTMLInputElement> {
     label: string
     errors?: string
-    registration: UseFormRegisterReturn
+    registration: UseFormRegisterReturn<TFieldName>
     isLoadingPrice?: boolean
-    handleClearValue?: (fieldName: string) => void
+    handleClearValue?: (fieldName: keyof ITransactionForm) => void
     variant?: FieldVariant
     fieldValue?: number | null
 }
 
-export function Field({
+export function Field<TFieldName extends keyof ITransactionForm>({
     label,
     errors,
     registration,
@@ -24,11 +25,11 @@ export function Field({
     variant = 'primary',
     fieldValue,
     ...props
-}: FieldProps) {
+}: FieldProps<TFieldName>) {
     const styles = variantStyles[variant]
     const isDate = props.type === 'date'
-    const isNumber = props.type === 'number'
-    const isPrice = label === 'Price'
+    // const isNumber = props.type === 'number'
+    // const isPrice = label === 'Price'
 
     // const handleNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     //     if (isPrice) return

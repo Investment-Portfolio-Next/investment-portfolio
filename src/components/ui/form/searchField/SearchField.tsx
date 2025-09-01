@@ -1,4 +1,4 @@
-import type { UseFormRegisterReturn } from 'react-hook-form'
+import { type UseFormRegisterReturn } from 'react-hook-form'
 import type { AssetType, FieldVariant } from '@/types/commonTypes'
 import { useState } from 'react'
 import type { InputHTMLAttributes } from 'react'
@@ -16,7 +16,9 @@ interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
     variant?: FieldVariant
     assetType: AssetType
     resetForm: () => void
+    resetFieldsForSearch: () => void
     errors?: string
+    hasErrors?: boolean
 }
 
 export function SearchField({
@@ -25,7 +27,10 @@ export function SearchField({
     variant = 'primary',
     assetType,
     resetForm,
+    resetFieldsForSearch,
     errors,
+    hasErrors,
+
     ...inputProps
 }: SearchFieldProps) {
     const styles = variantStyles[variant]
@@ -43,7 +48,10 @@ export function SearchField({
         error,
         isLoading,
         isFetching,
-    } = useAssetSearch(!hasUserSelected && debouncedSearchString.trim() !== '' ? debouncedSearchString : '', assetType)
+    } = useAssetSearch(
+        hasErrors || hasUserSelected || debouncedSearchString.trim() === '' ? '' : debouncedSearchString,
+        assetType,
+    )
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -51,33 +59,32 @@ export function SearchField({
         setHasUserSelected(false)
         clearAsset()
         setShowResults(true)
-        resetForm()
-        registration.onChange(e) // Update form registration value
+        registration.onChange(e)
+        resetFieldsForSearch()
     }
 
     const handleResultSelect = (result: SearchResult) => {
-        const selectedValue = result.symbol
         setHasUserSelected(true)
-        setSearchString(`${result.symbol} - ${result.name}`)
         setAsset(result)
         setShowResults(false)
 
-        // Update the form registration
         registration.onChange({
-            target: { value: selectedValue, name: registration.name },
+            target: { value: result.symbol, name: registration.name },
         } as React.ChangeEvent<HTMLInputElement>)
+
+        setSearchString(`${result.symbol} - ${result.name}`)
     }
 
     const handleClearInput = () => {
         setSearchString('')
         clearAsset()
-        resetForm()
         setShowResults(false)
 
-        // Clear the form registration
         registration.onChange({
             target: { value: '', name: registration.name },
         } as React.ChangeEvent<HTMLInputElement>)
+
+        resetForm()
     }
 
     const handleInputBlur = () => {
@@ -98,11 +105,13 @@ export function SearchField({
                     <input
                         {...inputProps}
                         className={`h-9 input-basic ${error ? 'border-error focus:border-error' : styles}`}
-                        {...registration}
-                        value={searchString}
+                        name={registration.name}
+                        ref={registration.ref}
+                        onBlur={registration.onBlur}
                         onChange={handleInputChange}
                         onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
+                        onBlurCapture={handleInputBlur}
+                        value={searchString}
                         autoComplete="off"
                         placeholder={`Search for ${assetType}...`}
                     />
