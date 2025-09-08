@@ -15,6 +15,7 @@ import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
 import { SearchField } from '@/ui/form/searchField/SearchField'
 import { useAsset } from '@/store/useAsset'
+import { DateField } from '@/ui/form/dateField/DateField'
 
 interface TransactionsFormProps {
     assetType: AssetType
@@ -148,7 +149,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     fieldValue={quantity}
                     handleClearValue={handleClearValue}
                 />
-                <Field
+                <DateField
                     label="Date"
                     type="date"
                     registration={{
