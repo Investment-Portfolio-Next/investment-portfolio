@@ -67,7 +67,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     const currency = useWatch({ control, name: 'transactionCurrency' })
     const price = useWatch({ control, name: 'initialPrice' })
     const quantity = useWatch({ control, name: 'transactionQuantity' })
-    const dateOfTransaction = useWatch({ control, name: 'transactionDate' })
+    // const dateOfTransaction = useWatch({ control, name: 'transactionDate' })
     const commission = useWatch({ control, name: 'transactionCommision' })
     const bondNominal = useWatch({ control, name: 'bondNominal' })
     const accruedInterest = useWatch({ control, name: 'bondAccruedInterest' })
@@ -144,6 +144,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 <Field
                     label="Quantity"
                     type="number"
+                    step="any"
                     registration={register('transactionQuantity', validations.transactionQuantity)}
                     errors={errors.transactionQuantity?.message}
                     fieldValue={quantity}

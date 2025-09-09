@@ -26,8 +26,8 @@ const validateDate = (value: string, accountOpenDate: Date) => {
     return true
 }
 
-const validateDecimals = (maxDecimals: number) => (value?: number) => {
-    if (value === undefined) return 'Value is required'
+const validateDecimals = (maxDecimals: number) => (value?: number | null) => {
+    if (value === undefined || value === null) return 'Value is required'
     const str = value.toString()
     const decimals = str.includes('.') ? str.split('.')[1].length : 0
     return decimals <= maxDecimals || `Must have at most ${maxDecimals} decimal places`
@@ -42,8 +42,8 @@ export const getValidationRules = ({
         symbolID: {
             required: 'Asset ID is required',
             pattern: {
-                value: /^[\w\s\-]+$/,
-                message: 'Asset ID may contain latin letters, numbers, spaces, and hyphens only',
+                value: /^[\w\s\-\.\,]+$/,
+                message: 'Asset ID may contain latin letters, numbers, spaces, dots, commas and hyphens only',
             },
         },
         transactionType: {
@@ -51,9 +51,9 @@ export const getValidationRules = ({
         },
         transactionQuantity: {
             required: 'Quantity is required',
-            min: { value: 1, message: 'Quantity must be at least 1' },
+            min: { value: 0.000000001, message: 'Quantity must be at least 0.000000001' },
             max: { value: assetQuantityLimit, message: `Quantity must not exceed ${assetQuantityLimit}` },
-            validate: (value) => Number.isInteger(Number(value)) || 'Quantity must be an integer',
+            validate: validateDecimals(9),
             valueAsNumber: true,
         },
         transactionDate: {
