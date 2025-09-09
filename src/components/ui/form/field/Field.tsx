@@ -23,11 +23,29 @@ export function Field<TFieldName extends keyof ITransactionForm>({
     handleClearValue,
     variant = 'primary',
     fieldValue,
+    onKeyDown,
+    onPaste,
     ...props
 }: FieldProps<TFieldName>) {
     const styles = variantStyles[variant]
 
     const isNotNullValue = fieldValue?.valueOf()
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.ctrlKey || e.altKey || e.metaKey) {
+            onKeyDown?.(e)
+            return
+        }
+        if (['.', '-', 'e', 'E'].includes(e.key)) {
+            e.preventDefault()
+        }
+        onKeyDown?.(e)
+    }
+
+    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        onPaste?.(e)
+    }
 
     return (
         <div>
@@ -38,6 +56,9 @@ export function Field<TFieldName extends keyof ITransactionForm>({
                         className={`h-9 input-basic ${errors ? 'border-error focus:border-error' : styles}`}
                         {...registration}
                         {...props}
+                        onKeyDown={handleKeyDown}
+                        onPaste={handlePaste}
+                        autoComplete="off"
                     />
 
                     <div className="absolute inset-y-0 right-2 flex items-center justify-center">

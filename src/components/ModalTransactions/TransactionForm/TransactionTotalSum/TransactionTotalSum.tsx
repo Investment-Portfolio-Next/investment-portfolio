@@ -22,7 +22,9 @@ export function TransactionTotalSum({
     accruedInterest = 0,
     accruedPerBond = true,
 }: TransactionTotalSumProps) {
-    if (price === null || quantity === null || commission === null || accruedInterest === null) return
+    if (price === null || quantity === null) return
+    if (isBond && accruedInterest === null) return
+
     const baseCost = price * quantity
     const aiCost = isBond ? (accruedPerBond ? accruedInterest * quantity : accruedInterest) : 0
 
