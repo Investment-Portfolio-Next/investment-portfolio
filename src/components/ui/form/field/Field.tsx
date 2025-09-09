@@ -29,8 +29,6 @@ export function Field<TFieldName extends keyof ITransactionForm>({
 }: FieldProps<TFieldName>) {
     const styles = variantStyles[variant]
 
-    const isNotNullValue = fieldValue?.valueOf()
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.ctrlKey || e.altKey || e.metaKey) {
             onKeyDown?.(e)
@@ -46,6 +44,13 @@ export function Field<TFieldName extends keyof ITransactionForm>({
         e.preventDefault()
         onPaste?.(e)
     }
+    const currentFieldValue = fieldValue
+
+    const hasClearableValue =
+        currentFieldValue !== null &&
+        currentFieldValue !== undefined &&
+        !isNaN(currentFieldValue as number) &&
+        String(currentFieldValue).trim() !== ''
 
     return (
         <div>
@@ -59,10 +64,15 @@ export function Field<TFieldName extends keyof ITransactionForm>({
                         onKeyDown={handleKeyDown}
                         onPaste={handlePaste}
                         autoComplete="off"
+                        value={
+                            currentFieldValue === null || currentFieldValue === undefined || isNaN(currentFieldValue)
+                                ? ''
+                                : currentFieldValue
+                        }
                     />
 
                     <div className="absolute inset-y-0 right-2 flex items-center justify-center">
-                        {!isLoadingPrice && isNotNullValue && (
+                        {!isLoadingPrice && hasClearableValue && (
                             <button
                                 type="button"
                                 onClick={() => handleClearValue(registration.name)}
