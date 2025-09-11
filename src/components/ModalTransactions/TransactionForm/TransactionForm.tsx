@@ -149,6 +149,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     errors={errors.transactionQuantity?.message}
                     fieldValue={quantity}
                     handleClearValue={handleClearValue}
+                    setValue={setValue}
                 />
                 <DateField
                     label="Date"
@@ -180,6 +181,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     isLoadingPrice={isLoadingPrice}
                     fieldValue={price}
                     handleClearValue={handleClearValue}
+                    setValue={setValue}
                     // placeholder={'0'}
                 />
                 <Field
@@ -190,6 +192,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     errors={errors.transactionCommision?.message}
                     fieldValue={commission}
                     handleClearValue={handleClearValue}
+                    setValue={setValue}
                 />
                 <SelectField
                     label="Currency"
@@ -208,6 +211,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                         errors={errors.bondNominal?.message}
                         fieldValue={bondNominal}
                         handleClearValue={handleClearValue}
+                        setValue={setValue}
                     />
                     <Field
                         label="Accrued Interest (AI)"
@@ -217,6 +221,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                         errors={errors.bondAccruedInterest?.message}
                         fieldValue={accruedInterest}
                         handleClearValue={handleClearValue}
+                        setValue={setValue}
                     />
                     <div className="flex pb-3 w-full h-full justify-start items-end">
                         <Checkbox label="AI per Bond" registration={register('isAccruedInterestPerBond')} />

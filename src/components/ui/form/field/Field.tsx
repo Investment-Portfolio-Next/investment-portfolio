@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from 'react'
-import type { UseFormRegisterReturn } from 'react-hook-form'
+import type { UseFormRegisterReturn, UseFormSetValue, PathValue } from 'react-hook-form'
 import type { FieldVariant } from '@/types/commonTypes'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { X, LoaderCircle } from 'lucide-react'
@@ -13,6 +13,7 @@ interface FieldProps<TFieldName extends keyof ITransactionForm> extends InputHTM
     handleClearValue: (fieldName: keyof ITransactionForm) => void
     variant?: FieldVariant
     fieldValue?: number | null
+    setValue: UseFormSetValue<ITransactionForm>
 }
 
 export function Field<TFieldName extends keyof ITransactionForm>({
@@ -25,6 +26,8 @@ export function Field<TFieldName extends keyof ITransactionForm>({
     fieldValue,
     onKeyDown,
     onPaste,
+    onBlur,
+    setValue,
     ...props
 }: FieldProps<TFieldName>) {
     const styles = variantStyles[variant]
@@ -44,13 +47,43 @@ export function Field<TFieldName extends keyof ITransactionForm>({
         e.preventDefault()
         onPaste?.(e)
     }
-    const currentFieldValue = fieldValue
+
+    function isNumberOrNull(value: unknown): value is number | null {
+        return typeof value === 'number' || value === null
+    }
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const originalValue = e.target.value
+        let valueToSet: string | number | null = originalValue
+
+        if (originalValue.length > 0) {
+            const numValue = Number(originalValue)
+            if (!isNaN(numValue) && isFinite(numValue)) {
+                valueToSet = numValue
+            } else {
+                valueToSet = null
+            }
+        } else {
+            valueToSet = null
+        }
+
+        if (isNumberOrNull(valueToSet)) {
+            setValue(registration.name, valueToSet as PathValue<ITransactionForm, TFieldName>, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true,
+            })
+        }
+
+        registration.onBlur(e)
+        onBlur?.(e)
+    }
 
     const hasClearableValue =
-        currentFieldValue !== null &&
-        currentFieldValue !== undefined &&
-        !isNaN(currentFieldValue as number) &&
-        String(currentFieldValue).trim() !== ''
+        fieldValue !== null &&
+        fieldValue !== undefined &&
+        !isNaN(fieldValue as number) &&
+        String(fieldValue).trim() !== ''
 
     return (
         <div>
@@ -63,12 +96,9 @@ export function Field<TFieldName extends keyof ITransactionForm>({
                         {...props}
                         onKeyDown={handleKeyDown}
                         onPaste={handlePaste}
+                        onBlur={handleBlur}
                         autoComplete="off"
-                        value={
-                            currentFieldValue === null || currentFieldValue === undefined || isNaN(currentFieldValue)
-                                ? ''
-                                : currentFieldValue
-                        }
+                        value={fieldValue === null || fieldValue === undefined || isNaN(fieldValue) ? '' : fieldValue}
                     />
 
                     <div className="absolute inset-y-0 right-2 flex items-center justify-center">
