@@ -22,16 +22,19 @@ export function TransactionTotalSum({
     accruedInterest = 0,
     accruedPerBond = true,
 }: TransactionTotalSumProps) {
-    if (price === null || quantity === null) return
-    if (isBond && accruedInterest === null) return
+    const safeNumber = (value: number | null | undefined) => (value == null || isNaN(value) ? 0 : value)
 
-    const baseCost = price * quantity
-    const aiCost = isBond ? (accruedPerBond ? accruedInterest * quantity : accruedInterest) : 0
-
-    const hasInvalidValues = [baseCost, commission, aiCost].some((val) => isNaN(val))
-
-    const commissionAdjusted = typeOfTransaction === 'buy' ? commission : -commission
-    const total = hasInvalidValues ? 0 : +(baseCost + commissionAdjusted + aiCost).toFixed(2)
+    const total = Number(
+        (
+            safeNumber(price) * safeNumber(quantity) +
+            (typeOfTransaction === 'buy' ? safeNumber(commission) : -safeNumber(commission)) +
+            (isBond
+                ? accruedPerBond
+                    ? safeNumber(accruedInterest) * safeNumber(quantity)
+                    : safeNumber(accruedInterest)
+                : 0)
+        ).toFixed(2),
+    )
 
     const currencySymbol = getCurrencySymbol(currency)
     return (
