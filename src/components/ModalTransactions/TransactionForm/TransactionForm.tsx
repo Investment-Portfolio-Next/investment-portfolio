@@ -25,8 +25,6 @@ interface TransactionsFormProps {
 export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
     const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice } = useAsset()
 
-    // const today = formatDateToInput(new Date())
-
     const accountOpenDate = new Date('2020-01-01') //TODO: set real data later: date of account creation
     const assetQuantityLimit = 1000 // TODO: check if the limit is necessary
     const isBond = assetType === 'bond'
