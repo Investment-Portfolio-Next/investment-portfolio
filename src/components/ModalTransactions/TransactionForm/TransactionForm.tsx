@@ -102,11 +102,12 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         ])
     }
 
-    const handlePriceChange = (e: { target: { value: string; name: string } }) => {
-        const newPrice = e.target.value ? parseFloat(e.target.value) : null
+    const handlePriceChange = (e: { target: { value: number | null; name: string } }) => {
+        const newPrice = e.target.value ? e.target.value : null
 
         if (asset && !isLoadingPrice) {
             setManualPrice(newPrice)
+            clearPriceError()
         }
     }
 
@@ -180,7 +181,6 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     fieldValue={price}
                     handleClearValue={handleClearValue}
                     setValue={setValue}
-                    // placeholder={'0'}
                 />
                 <Field
                     label="Commission"

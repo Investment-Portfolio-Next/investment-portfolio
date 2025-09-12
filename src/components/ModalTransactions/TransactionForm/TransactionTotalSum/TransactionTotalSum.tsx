@@ -33,7 +33,7 @@ export function TransactionTotalSum({
                     ? safeNumber(accruedInterest) * safeNumber(quantity)
                     : safeNumber(accruedInterest)
                 : 0)
-        ).toFixed(2),
+        ).toFixed(9),
     )
 
     const currencySymbol = getCurrencySymbol(currency)
