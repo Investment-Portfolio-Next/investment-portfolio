@@ -112,12 +112,34 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     }
 
     const onSubmit: SubmitHandler<ITransactionForm> = (data) => {
-        const submissionData = {
-            ...data,
-            assetType,
+        const provider = asset?.provider
+        const submissionData = (assetType: string) => {
+            const base = {
+                assetType,
+                provider,
+                symbolID: data.symbolID,
+                initialPrice: data.initialPrice,
+                transactionCommision: data.transactionCommision,
+                transactionCurrency: data.transactionCurrency,
+                transactionDate: data.transactionDate,
+                transactionQuantity: data.transactionQuantity,
+                transactionType: data.transactionType,
+                notes: data.notes,
+            }
+
+            if (assetType === 'bond') {
+                return {
+                    ...base,
+                    bondAccruedInterest: data.bondAccruedInterest,
+                    bondNominal: data.bondNominal,
+                    isAccruedInterestPerBond: data.isAccruedInterestPerBond,
+                }
+            }
+
+            return base
         }
 
-        console.log(submissionData)
+        console.log(submissionData(assetType))
         reset()
         onClose()
     }
