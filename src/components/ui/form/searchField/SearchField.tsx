@@ -1,4 +1,4 @@
-import { type UseFormRegisterReturn } from 'react-hook-form'
+import type { UseFormRegisterReturn, UseFormSetValue, PathValue, Path } from 'react-hook-form'
 import type { AssetType, FieldVariant } from '@/types/commonTypes'
 import { useState } from 'react'
 import type { InputHTMLAttributes } from 'react'
@@ -9,19 +9,22 @@ import { useDebounce } from '@/hooks/useDebounce'
 import type { SearchResult } from '@/services/transactionApi/transaction.types'
 import { useAssetSearch } from '@/services/transactionApi/useAssetSearch'
 import { useAsset } from '@/store/useAsset'
+import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'
 
-interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
+interface SearchFieldProps<TFieldName extends keyof ITransactionForm>
+    extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
     label: string
-    registration: UseFormRegisterReturn
+    registration: UseFormRegisterReturn<TFieldName>
     variant?: FieldVariant
     assetType: AssetType
     resetForm: () => void
     resetFieldsForSearch: () => void
     errors?: string
     hasErrors?: boolean
+    setValue: UseFormSetValue<ITransactionForm>
 }
 
-export function SearchField({
+export function SearchField<TFieldName extends keyof ITransactionForm>({
     label,
     registration,
     variant = 'primary',
@@ -30,9 +33,9 @@ export function SearchField({
     resetFieldsForSearch,
     errors,
     hasErrors,
-
+    setValue,
     ...inputProps
-}: SearchFieldProps) {
+}: SearchFieldProps<TFieldName>) {
     const styles = variantStyles[variant]
 
     const [searchString, setSearchString] = useState<string>('')
@@ -59,7 +62,6 @@ export function SearchField({
         setHasUserSelected(false)
         clearAsset()
         setShowResults(true)
-        registration.onChange(e)
         resetFieldsForSearch()
     }
 
@@ -68,9 +70,15 @@ export function SearchField({
         setAsset(result)
         setShowResults(false)
 
-        registration.onChange({
-            target: { value: result.symbol, name: registration.name },
-        } as React.ChangeEvent<HTMLInputElement>)
+        setValue(
+            registration.name as Path<ITransactionForm>,
+            { symbol: result.symbol, name: result.name } as PathValue<ITransactionForm, TFieldName>,
+            {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true,
+            },
+        )
 
         setSearchString(`${result.symbol} - ${result.name}`)
     }
@@ -80,10 +88,15 @@ export function SearchField({
         clearAsset()
         setShowResults(false)
 
-        registration.onChange({
-            target: { value: '', name: registration.name },
-        } as React.ChangeEvent<HTMLInputElement>)
-
+        setValue(
+            registration.name as Path<ITransactionForm>,
+            { symbol: '', name: '' } as PathValue<ITransactionForm, TFieldName>,
+            {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true,
+            },
+        )
         resetForm()
     }
 
@@ -105,9 +118,6 @@ export function SearchField({
                     <input
                         {...inputProps}
                         className={`h-9 input-basic ${error ? 'border-error focus:border-error' : styles}`}
-                        name={registration.name}
-                        ref={registration.ref}
-                        onBlur={registration.onBlur}
                         onChange={handleInputChange}
                         onFocus={handleInputFocus}
                         onBlurCapture={handleInputBlur}

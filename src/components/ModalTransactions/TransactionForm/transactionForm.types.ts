@@ -1,7 +1,7 @@
 import type { CurrencyType } from '@/types/commonTypes'
 
 export interface ITransactionForm {
-    symbolID: string
+    symbolID: { symbol: string; name: string }
     transactionType: 'buy' | 'sell'
     transactionQuantity: number | null
     transactionDate: string

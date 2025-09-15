@@ -35,7 +35,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         isBond,
     })
     const defaultValues: ITransactionForm = {
-        symbolID: '',
+        symbolID: { symbol: '', name: '' },
         transactionType: 'buy',
         transactionCurrency: 'USD',
         transactionDate: formatDateToInput(new Date()),
@@ -55,6 +55,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         reset,
         control,
         setValue,
+
         clearErrors,
     } = useForm<ITransactionForm>({
         mode: 'onChange',
@@ -117,7 +118,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             const base = {
                 assetType,
                 provider,
-                symbolID: data.symbolID,
+                symbolID: data.symbolID.symbol,
                 initialPrice: data.initialPrice,
                 transactionCommision: data.transactionCommision,
                 transactionCurrency: data.transactionCurrency,
@@ -155,6 +156,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 errors={errors.symbolID?.message}
                 hasErrors={!!errors.symbolID}
                 resetFieldsForSearch={resetFieldsForSearch}
+                setValue={setValue}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField
