@@ -58,11 +58,22 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
+
         setSearchString(value)
         setHasUserSelected(false)
         clearAsset()
         setShowResults(true)
         resetFieldsForSearch()
+
+        setValue(
+            registration.name as Path<ITransactionForm>,
+            { symbol: value, name: '' } as PathValue<ITransactionForm, TFieldName>,
+            {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true,
+            },
+        )
     }
 
     const handleResultSelect = (result: SearchResult) => {

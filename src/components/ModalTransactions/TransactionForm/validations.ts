@@ -43,10 +43,13 @@ export const getValidationRules = ({
 }: ValidationParams): ValidationRules => {
     const rules: ValidationRules = {
         symbolID: {
-            required: 'Asset ID is required',
-            pattern: {
-                value: /^[\w\s\-\.\,&]+$/,
-                message: 'Asset ID may contain latin letters, numbers, spaces, &, dots, commas and hyphens only',
+            validate: (value?: { symbol?: string; name?: string }) => {
+                const symbol = value?.symbol ?? ''
+                if (!symbol || symbol.trim() === '') return 'Asset ID is required'
+                if (!/^[\w\s\-]+$/.test(symbol)) {
+                    return 'Asset ID may contain latin letters, numbers, spaces and hyphens only'
+                }
+                return true
             },
         },
         transactionType: {

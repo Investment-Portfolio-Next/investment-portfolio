@@ -55,7 +55,6 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         reset,
         control,
         setValue,
-
         clearErrors,
     } = useForm<ITransactionForm>({
         mode: 'onChange',
