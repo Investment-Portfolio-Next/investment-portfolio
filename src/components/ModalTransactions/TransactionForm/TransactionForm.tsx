@@ -52,7 +52,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         register,
         unregister,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isValid, isSubmitting },
         reset,
         control,
         setValue,
@@ -118,7 +118,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         }
     }, [unregister, isBond])
 
-    const onSubmit: SubmitHandler<ITransactionForm> = (data) => {
+    const onSubmit: SubmitHandler<ITransactionForm> = async (data) => {
         const provider = asset?.provider
         const submissionData = {
             ...data,
@@ -126,6 +126,8 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             assetType,
             provider,
         }
+
+        await new Promise((resolve) => setTimeout(resolve, 1000))
 
         console.log(submissionData)
         reset()
@@ -260,7 +262,9 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     <Button type="button" onClick={onClose} variant="primaryTransparent">
                         Cancel
                     </Button>
-                    <Button type="submit">Save Transaction</Button>
+                    <Button type="submit" disabled={!isValid} isSubmitting={isSubmitting}>
+                        Save Transaction
+                    </Button>
                 </div>
             </div>
         </form>
