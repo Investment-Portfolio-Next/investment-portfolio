@@ -171,9 +171,7 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
                 </div>
             )}
 
-            <p className="text-error text-xs mt-1 min-h-[1.125rem]">
-                {error ? error.message : errors ? errors : '\u00A0'}
-            </p>
+            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{error ? error.message : errors ? errors : ' '}</p>
         </div>
     )
 }

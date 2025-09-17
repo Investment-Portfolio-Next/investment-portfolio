@@ -116,7 +116,7 @@ export function Field<TFieldName extends keyof ITransactionForm>({
                     </div>
                 </div>
             </label>
-            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{errors || '\u00A0'}</p>
+            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{errors || ' '}</p>
         </div>
     )
 }

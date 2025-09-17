@@ -223,7 +223,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             </div>
 
             {isBond && (
-                <div className="grid grid-cols-3 gap-4 items-center">
+                <div className="grid grid-cols-3 gap-4">
                     <Field
                         label="Bond Nominal"
                         type="number"
