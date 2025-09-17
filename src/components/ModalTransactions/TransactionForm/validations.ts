@@ -46,8 +46,8 @@ export const getValidationRules = ({
             validate: (value?: { symbol?: string; name?: string }) => {
                 const symbol = value?.symbol ?? ''
                 if (!symbol || symbol.trim() === '') return 'Asset ID is required'
-                if (!/^[\w\s\-]+$/.test(symbol)) {
-                    return 'Asset ID may contain latin letters, numbers, spaces and hyphens only'
+                if (!/^[\w\s\-\.]+$/.test(symbol)) {
+                    return 'Asset ID may contain latin letters, numbers, dots, spaces and hyphens only'
                 }
                 return true
             },
@@ -60,12 +60,9 @@ export const getValidationRules = ({
             valueAsNumber: true,
             validate: (value?: number | null) => {
                 if (value == null || isNaN(value)) return 'Quantity is required'
-
                 if (countDecimals(value) > 9) return 'Must have at most 9 decimal places'
-
-                if (value < 0.000000001) return 'Quantity must be at least 0.000000001'
+                if (value < 0.000000001) return 'Quantity must be at least 0,000000001'
                 if (value > assetQuantityLimit) return `Quantity must not exceed ${assetQuantityLimit}`
-
                 return true
             },
         },
@@ -78,12 +75,9 @@ export const getValidationRules = ({
             valueAsNumber: true,
             validate: (value?: number | null) => {
                 if (value == null || isNaN(value)) return 'Price is required'
-
-                if (countDecimals(value) > 6) return 'Must have at most 6 decimal places'
-
-                if (value < 0.000001) return 'Price must be at least 0.000001'
-                if (value > 1_000_000) return 'Price must not exceed 1,000,000'
-
+                if (countDecimals(value) > 9) return 'Must have at most 9 decimal places'
+                if (value < 0.000000001) return 'Price must be at least 0,000000001'
+                if (value > 1_000_000) return 'Price must not exceed 1000000'
                 return true
             },
         },
@@ -91,18 +85,14 @@ export const getValidationRules = ({
             required: 'Commission is required',
             valueAsNumber: true,
             validate: (value?: number | null) => {
-                if (value == null || isNaN(value)) return 'Price is required'
-
+                if (value == null || isNaN(value)) return 'Commission is required'
                 if (countDecimals(value) > 6) return 'Must have at most 6 decimal places'
-
-                if (value < 0) return 'Commission must be non-negative'
-                if (value > 1_000_000) return 'Commission must not exceed 1,000,000'
-
+                if (value > 1_000_000) return 'Commission must not exceed 1000000'
                 return true
             },
         },
         notes: {
-            maxLength: { value: 300, message: 'Max length is 300 characters' },
+            maxLength: { value: 300, message: 'Maximum length is 300 characters' },
         },
     }
 
@@ -112,12 +102,9 @@ export const getValidationRules = ({
             valueAsNumber: true,
             validate: (value?: number | null) => {
                 if (value == null || isNaN(value)) return 'Nominal is required'
-
                 if (countDecimals(value) > 6) return 'Must have at most 6 decimal places'
-
-                if (value < 0.000001) return 'Must be greater than 0'
-                if (value > 100_000) return 'Must not exceed 100,000'
-
+                if (value < 0.000001) return 'Must be greater than 0,000001'
+                if (value > 100_000) return 'Must not exceed 100000'
                 return true
             },
         }
@@ -126,9 +113,8 @@ export const getValidationRules = ({
             valueAsNumber: true,
             validate: (value?: number | null) => {
                 if (value == null || isNaN(value)) return 'Accrued interest is required'
-                if (countDecimals(value) > 6) return 'Must have at most 6 decimal places'
-                if (value < 0) return 'Must be non-negative'
-                if (value > 100_000) return 'Must not exceed 100,000'
+                if (countDecimals(value) > 9) return 'Must have at most 9 decimal places'
+                if (value > 100_000) return 'Must not exceed 100000'
                 return true
             },
         }
