@@ -50,6 +50,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
 
     const {
         register,
+        unregister,
         handleSubmit,
         formState: { errors },
         reset,
@@ -111,35 +112,22 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         }
     }
 
+    useEffect(() => {
+        if (!isBond) {
+            unregister(['bondNominal', 'bondAccruedInterest', 'isAccruedInterestPerBond'])
+        }
+    }, [unregister, isBond])
+
     const onSubmit: SubmitHandler<ITransactionForm> = (data) => {
         const provider = asset?.provider
-        const submissionData = (assetType: string) => {
-            const base = {
-                assetType,
-                provider,
-                symbolID: data.symbolID.symbol,
-                initialPrice: data.initialPrice,
-                transactionCommision: data.transactionCommision,
-                transactionCurrency: data.transactionCurrency,
-                transactionDate: data.transactionDate,
-                transactionQuantity: data.transactionQuantity,
-                transactionType: data.transactionType,
-                notes: data.notes,
-            }
-
-            if (assetType === 'bond') {
-                return {
-                    ...base,
-                    bondAccruedInterest: data.bondAccruedInterest,
-                    bondNominal: data.bondNominal,
-                    isAccruedInterestPerBond: data.isAccruedInterestPerBond,
-                }
-            }
-
-            return base
+        const submissionData = {
+            ...data,
+            symbolID: data.symbolID.symbol,
+            assetType,
+            provider,
         }
 
-        console.log(submissionData(assetType))
+        console.log(submissionData)
         reset()
         onClose()
     }
