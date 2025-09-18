@@ -54,9 +54,9 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         handleSubmit,
         formState: { errors, isValid, isSubmitting },
         reset,
+        resetField,
         control,
         setValue,
-        clearErrors,
     } = useForm<ITransactionForm>({
         mode: 'onChange',
         defaultValues,
@@ -83,9 +83,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     const handleClearValue = (fieldNames: keyof ITransactionForm | (keyof ITransactionForm)[]): void => {
         const names = Array.isArray(fieldNames) ? fieldNames : [fieldNames]
         names.forEach((fieldName) => {
-            const defaultValue = defaultValues[fieldName]
-            setValue(fieldName, defaultValue)
-            clearErrors(fieldName)
+            resetField(fieldName)
             if (fieldName === 'initialPrice') clearPriceError()
         })
     }
