@@ -1,7 +1,7 @@
-import type { UseFormRegisterReturn, UseFormSetValue, PathValue, Path } from 'react-hook-form'
+import type { UseFormSetValue, PathValue, Path, Control, RegisterOptions } from 'react-hook-form'
+import { useController } from 'react-hook-form'
 import type { AssetType, FieldVariant } from '@/types/commonTypes'
 import { useState } from 'react'
-import type { InputHTMLAttributes } from 'react'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { X } from 'lucide-react'
 import { LoaderCircle } from 'lucide-react'
@@ -11,31 +11,31 @@ import { useAssetSearch } from '@/services/transactionApi/useAssetSearch'
 import { useAsset } from '@/store/useAsset'
 import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'
 
-interface SearchFieldProps<TFieldName extends keyof ITransactionForm>
-    extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
+interface SearchFieldProps<TFieldName extends Path<ITransactionForm>>
+    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
+    control: Control<ITransactionForm>
+    name: TFieldName
+    rules?: RegisterOptions<ITransactionForm, TFieldName>
+    setValue: UseFormSetValue<ITransactionForm>
     label: string
-    registration: UseFormRegisterReturn<TFieldName>
     variant?: FieldVariant
     assetType: AssetType
     resetForm: () => void
     resetFieldsForSearch: () => void
-    errors?: string
-    hasErrors?: boolean
-    setValue: UseFormSetValue<ITransactionForm>
 }
 
-export function SearchField<TFieldName extends keyof ITransactionForm>({
+export const SearchField = <TFieldName extends Path<ITransactionForm>>({
     label,
-    registration,
+    control,
+    name,
+    rules,
     variant = 'primary',
     assetType,
     resetForm,
     resetFieldsForSearch,
-    errors,
-    hasErrors,
     setValue,
     ...inputProps
-}: SearchFieldProps<TFieldName>) {
+}: SearchFieldProps<TFieldName>) => {
     const styles = variantStyles[variant]
 
     const [searchString, setSearchString] = useState<string>('')
@@ -47,8 +47,16 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
     const { setAsset, clearAsset } = useAsset()
 
     const {
+        field,
+        fieldState: { error: fieldErrors },
+        formState: {},
+    } = useController({ control, name, rules })
+
+    const hasErrors = !!fieldErrors
+
+    const {
         data: searchResults,
-        error,
+        error: searchErrors,
         isLoading,
         isFetching,
     } = useAssetSearch(
@@ -66,7 +74,7 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
         resetFieldsForSearch()
 
         setValue(
-            registration.name as Path<ITransactionForm>,
+            name as Path<ITransactionForm>,
             { symbol: value, name: '' } as PathValue<ITransactionForm, TFieldName>,
             {
                 shouldValidate: true,
@@ -82,7 +90,7 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
         setShowResults(false)
 
         setValue(
-            registration.name as Path<ITransactionForm>,
+            name as Path<ITransactionForm>,
             { symbol: result.symbol, name: result.name } as PathValue<ITransactionForm, TFieldName>,
             {
                 shouldValidate: true,
@@ -99,15 +107,12 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
         clearAsset()
         setShowResults(false)
 
-        setValue(
-            registration.name as Path<ITransactionForm>,
-            { symbol: '', name: '' } as PathValue<ITransactionForm, TFieldName>,
-            {
-                shouldValidate: true,
-                shouldDirty: true,
-                shouldTouch: true,
-            },
-        )
+        setValue(name as Path<ITransactionForm>, { symbol: '', name: '' } as PathValue<ITransactionForm, TFieldName>, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true,
+        })
+
         resetForm()
     }
 
@@ -128,13 +133,18 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
                 <div className="relative">
                     <input
                         {...inputProps}
-                        className={`h-9 input-basic ${error ? 'border-error focus:border-error' : styles}`}
+                        name={name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
                         onChange={handleInputChange}
                         onFocus={handleInputFocus}
                         onBlurCapture={handleInputBlur}
                         value={searchString}
                         autoComplete="off"
                         placeholder={`Search for ${assetType}...`}
+                        className={`h-9 input-basic ${
+                            searchErrors || fieldErrors ? 'border-error focus:border-error' : styles
+                        }`}
                     />
                     <div className="absolute inset-y-0 right-2 flex items-center justify-center">
                         {searchString && !isLoading && !isFetching && (
@@ -171,7 +181,9 @@ export function SearchField<TFieldName extends keyof ITransactionForm>({
                 </div>
             )}
 
-            <p className="text-error text-xs mt-1 min-h-[1.125rem]">{error ? error.message : errors ? errors : ' '}</p>
+            <p className="text-error text-xs mt-1 min-h-[1.125rem]">
+                {searchErrors ? searchErrors.message : fieldErrors ? fieldErrors.message : ' '}
+            </p>
         </div>
     )
 }

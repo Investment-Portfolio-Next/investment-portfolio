@@ -137,13 +137,13 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             <SearchField
                 label="Asset ID"
                 type="text"
-                registration={register('symbolID', validations.symbolID)}
                 assetType={assetType}
                 resetForm={reset}
-                errors={errors.symbolID?.message}
-                hasErrors={!!errors.symbolID}
                 resetFieldsForSearch={resetFieldsForSearch}
                 setValue={setValue}
+                control={control}
+                name={'symbolID'}
+                rules={validations.symbolID}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField
