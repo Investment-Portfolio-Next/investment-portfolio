@@ -75,19 +75,31 @@ export const getValidationRules = ({
             valueAsNumber: true,
             validate: (value?: number | null) => {
                 if (value == null || isNaN(value)) return 'Price is required'
-                if (countDecimals(value) > 9) return 'Must have at most 9 decimal places'
-                if (value < 0.000000001) return 'Price must be at least 0,000000001'
-                if (value > 1_000_000) return 'Price must not exceed 1000000'
+                if (countDecimals(value) > 12) return 'Must have at most 12 decimal places'
+                if (value < 0.000000000001) return 'Price must be at least 0.000000000001'
+                if (value > 999999999999999) return 'Price must not exceed 999999999999999'
                 return true
             },
         },
         transactionCommision: {
             required: 'Commission is required',
             valueAsNumber: true,
-            validate: (value?: number | null) => {
+            validate: (value?: number | null, formValues?: ITransactionForm) => {
                 if (value == null || isNaN(value)) return 'Commission is required'
                 if (countDecimals(value) > 6) return 'Must have at most 6 decimal places'
-                if (value > 1_000_000) return 'Commission must not exceed 1000000'
+
+                const price = formValues?.initialPrice ?? 0
+                const quantity = formValues?.transactionQuantity ?? 0
+
+                if (price > 0 && quantity > 0) {
+                    const transactionValue = price * quantity
+                    const maxCommission = Math.min(transactionValue * 0.5, 10_000_000)
+
+                    if (value > maxCommission)
+                        return `Commission must not exceed ${maxCommission} (50% of transaction value or 10000000, whichever is lower)`
+                } else {
+                    if (value > 10_000_000) return 'Commission must not exceed 10000000'
+                }
                 return true
             },
         },
@@ -104,7 +116,7 @@ export const getValidationRules = ({
                 if (value == null || isNaN(value)) return 'Nominal is required'
                 if (countDecimals(value) > 6) return 'Must have at most 6 decimal places'
                 if (value < 0.000001) return 'Must be greater than 0,000001'
-                if (value > 100_000) return 'Must not exceed 100000'
+                if (value > 999999999999999) return 'Must not exceed 999999999999999 '
                 return true
             },
         }
@@ -113,8 +125,8 @@ export const getValidationRules = ({
             valueAsNumber: true,
             validate: (value?: number | null) => {
                 if (value == null || isNaN(value)) return 'Accrued interest is required'
-                if (countDecimals(value) > 9) return 'Must have at most 9 decimal places'
-                if (value > 100_000) return 'Must not exceed 100000'
+                if (countDecimals(value) > 6) return 'Must have at most 6 decimal places'
+                if (value > 99999999999) return 'Must not exceed 99999999999'
                 return true
             },
         }
