@@ -35,12 +35,12 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         isBond,
     })
     const defaultValues: ITransactionForm = {
-        symbolID: { symbol: '', name: '' },
+        assetTicker: { symbol: '', name: '' },
         transactionType: 'buy',
         transactionCurrency: 'USD',
         transactionDate: formatDateToInput(new Date()),
         initialPrice: null,
-        transactionCommision: null,
+        transactionCommission: null,
         transactionQuantity: null,
         bondNominal: null,
         bondAccruedInterest: null,
@@ -67,7 +67,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     const price = useWatch({ control, name: 'initialPrice' })
     const quantity = useWatch({ control, name: 'transactionQuantity' })
     // const dateOfTransaction = useWatch({ control, name: 'transactionDate' })
-    const commission = useWatch({ control, name: 'transactionCommision' })
+    const commission = useWatch({ control, name: 'transactionCommission' })
     const bondNominal = useWatch({ control, name: 'bondNominal' })
     const accruedInterest = useWatch({ control, name: 'bondAccruedInterest' })
     const accruedPerBond = useWatch({ control, name: 'isAccruedInterestPerBond' })
@@ -94,7 +94,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             'transactionQuantity',
             'transactionDate',
             'initialPrice',
-            'transactionCommision',
+            'transactionCommission',
             'transactionCurrency',
             'notes',
             ...(isBond ? (['bondNominal', 'bondAccruedInterest', 'isAccruedInterestPerBond'] as const) : []),
@@ -120,7 +120,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         const provider = asset?.provider
         const submissionData = {
             ...data,
-            symbolID: data.symbolID.symbol,
+            assetTicker: data.assetTicker.symbol,
             assetType,
             provider,
         }
@@ -142,8 +142,8 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 resetFieldsForSearch={resetFieldsForSearch}
                 setValue={setValue}
                 control={control}
-                name={'symbolID'}
-                rules={validations.symbolID}
+                name={'assetTicker'}
+                rules={validations.assetTicker}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField
@@ -197,8 +197,8 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     label="Commission"
                     type="number"
                     step="any"
-                    registration={register('transactionCommision', validations.transactionCommision)}
-                    errors={errors.transactionCommision?.message}
+                    registration={register('transactionCommission', validations.transactionCommission)}
+                    errors={errors.transactionCommission?.message}
                     fieldValue={commission}
                     handleClearValue={handleClearValue}
                     setValue={setValue}

@@ -42,7 +42,7 @@ export const getValidationRules = ({
     isBond,
 }: ValidationParams): ValidationRules => {
     const rules: ValidationRules = {
-        symbolID: {
+        assetTicker: {
             validate: (value?: { symbol?: string; name?: string }) => {
                 const symbol = value?.symbol ?? ''
                 if (!symbol || symbol.trim() === '') return 'Asset ID is required'
@@ -81,7 +81,7 @@ export const getValidationRules = ({
                 return true
             },
         },
-        transactionCommision: {
+        transactionCommission: {
             required: 'Commission is required',
             valueAsNumber: true,
             validate: (value?: number | null, formValues?: ITransactionForm) => {
