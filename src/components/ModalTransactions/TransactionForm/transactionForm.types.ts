@@ -1,15 +1,15 @@
 import type { CurrencyType } from '@/types/commonTypes'
 
 export interface ITransactionForm {
-    symbolID: string
-    transactionType: string
-    transactionCurrency: CurrencyType
+    symbolID: { symbol: string; name: string }
+    transactionType: 'buy' | 'sell'
+    transactionQuantity: number | null
     transactionDate: string
-    initialPrice: number
-    transactionCommision: number
-    transactionQuantity: number
-    notes: string
-    bondNominal?: number
-    bondAccruedInterest?: number
+    initialPrice: number | null
+    transactionCommision: number | null
+    transactionCurrency: CurrencyType
+    bondNominal?: number | null
+    bondAccruedInterest?: number | null
     isAccruedInterestPerBond?: boolean
+    notes?: string
 }

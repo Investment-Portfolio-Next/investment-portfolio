@@ -6,6 +6,7 @@ import type { IQuickActionItem } from './quickactionSubmenu.types'
 import { ModalTransactions } from '../../../../ModalTransactions/ModalTransaction'
 // import { SuccessModal } from '@/components/shared/modals/SuccessModal'
 // import { ErrorModal } from '@/components/shared/modals/ErrorModal'
+import { useAsset } from '@/store/useAsset'
 
 interface QuickActionSubmenuProps {
     closeSubmenu: () => void
@@ -13,12 +14,14 @@ interface QuickActionSubmenuProps {
 
 export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
     const [openModalId, setOpenModalId] = useState<string | null>(null)
+    const clearAsset = useAsset((state) => state.clearAsset)
 
     const activeItem = QUICK_ACTION_DATA.find((item) => item.id === openModalId)
 
     const handleOnClose = () => {
         setOpenModalId(null)
         closeSubmenu()
+        clearAsset()
     }
 
     return (
