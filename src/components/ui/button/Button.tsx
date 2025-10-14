@@ -1,7 +1,13 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import '@/styles/custom-styles.scss'
 
-type ButtonStyleVariant = 'primaryFull' | 'primaryTransparent' | 'secondaryFull' | 'secondaryTransparent' | 'danger'
+type ButtonStyleVariant =
+    | 'primaryFull'
+    | 'primaryTransparent'
+    | 'secondaryFull'
+    | 'secondaryTransparent'
+    | 'danger'
+    | 'primaryWhite'
 type ButtonSizeVariant = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -19,6 +25,8 @@ const variantClasses = {
     secondaryFull: 'text-white bg-custom-orange-gradient hover:opacity-90 active:opacity-80',
     secondaryTransparent: 'text-orange-gradient orange-gradient-border hover:opacity-90 active:opacity-80',
     danger: '',
+    primaryWhite:
+        'text-white border border-white hover:text-primaryLight hover:border-primaryLight active:text-primary active:border-primary',
 }
 
 const sizeClasses = {
