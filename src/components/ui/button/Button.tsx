@@ -6,6 +6,7 @@ type ButtonSizeVariant = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     isLoading?: boolean
+    isSubmitting?: boolean
     children: ReactNode
     variant?: ButtonStyleVariant
     size?: ButtonSizeVariant
@@ -29,19 +30,21 @@ const sizeClasses = {
 export function Button({
     children,
     isLoading = false,
+    isSubmitting = false,
     variant = 'primaryFull',
     size = 'md',
     className,
     disabled,
     ...props
 }: ButtonProps) {
-    const baseClasses = 'rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium'
+    const baseClasses =
+        'rounded transition-colors disabled:opacity-50 disabled:cursor-default font-medium min-w-[160px]'
 
     const combinedClassName = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className || ''}`
 
     return (
-        <button className={combinedClassName} disabled={isLoading || disabled} {...props}>
-            {isLoading ? 'Loading...' : children}
+        <button className={combinedClassName} disabled={isLoading || isSubmitting || disabled} {...props}>
+            {isLoading ? 'Loading...' : isSubmitting ? 'Submitting...' : children}
         </button>
     )
 }

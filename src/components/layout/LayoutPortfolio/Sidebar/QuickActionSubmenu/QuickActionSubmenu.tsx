@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { QUICK_ACTION_DATA } from './quickactionSubmenu.data'
 import { ModalTransactions } from '../../../../ModalTransactions/ModalTransaction'
 import type { IQuickActionItem } from './quickactionSubmenu.types'
+import { useAsset } from '@/store/useAsset'
 
 interface QuickActionSubmenuProps {
     closeSubmenu: () => void
@@ -11,12 +12,14 @@ interface QuickActionSubmenuProps {
 
 export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
     const [openModalId, setOpenModalId] = useState<string | null>(null)
+    const clearAsset = useAsset((state) => state.clearAsset)
 
     const activeItem = QUICK_ACTION_DATA.find((item) => item.id === openModalId)
 
     const handleOnClose = () => {
         setOpenModalId(null)
         closeSubmenu()
+        clearAsset()
     }
 
     return (
