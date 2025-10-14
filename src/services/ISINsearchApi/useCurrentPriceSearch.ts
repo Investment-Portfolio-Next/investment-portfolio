@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { AssetIdentifier, APIProvider } from './transaction.types'
+import type { AssetIdentifier, APIProvider } from './ISINsearch.types'
 import { assetQueries } from '../queries/assetQueries'
 
 export const useCurrentPriceSearch = (assetIdentifier: AssetIdentifier, provider: APIProvider) => {

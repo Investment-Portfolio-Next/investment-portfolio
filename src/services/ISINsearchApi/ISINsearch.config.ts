@@ -1,4 +1,4 @@
-import type { APIProvider, APIConfig } from './transaction.types'
+import type { APIProvider, APIConfig } from './ISINsearch.types'
 
 // Multi-API configuration with fallback priority
 export const API_CONFIGS: Record<APIProvider, APIConfig> = {

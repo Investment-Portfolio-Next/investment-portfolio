@@ -26,10 +26,10 @@ import type {
     HistoricalPriceResultTwelvedata,
     HistoricalPriceResultAlphavantage,
     HistoricalPriceResultCoingecko,
-} from './transaction.types'
+} from './ISINsearch.types'
 import type { AssetType } from '@/types/commonTypes'
 import { formatDateToInput } from '@/utils/helper'
-import { API_CONFIGS, API_KEYS } from './transaction.config'
+import { API_CONFIGS, API_KEYS } from './ISINsearch.config'
 
 const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean => {
     const type = instrumentType.toLowerCase()
