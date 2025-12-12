@@ -5,7 +5,7 @@ import type {
     AssetIdentifier,
     AssetPrice,
     TransactionDate,
-} from '@/services/transactionApi/ISINsearch.types'
+} from '@/services/ISINsearchApi/ISINsearch.types'
 import { assetQueries } from '@/services/queries/assetQueries'
 import { formatDateToInput } from '@/utils/helper'
 
