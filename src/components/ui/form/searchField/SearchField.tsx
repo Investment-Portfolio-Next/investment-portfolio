@@ -1,6 +1,6 @@
 import type { UseFormSetValue, PathValue, Path, Control, RegisterOptions } from 'react-hook-form'
 import { useController } from 'react-hook-form'
-import type { AssetType, FieldVariant } from '@/types/commonTypes'
+import type { AssetType, FieldVariant } from '@/types/commonTypes.types'
 import { useState } from 'react'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { X } from 'lucide-react'

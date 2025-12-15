@@ -2,7 +2,7 @@
 
 import { Modal } from '@/components/ui/modal/Modal'
 import { TransactionsForm } from './TransactionForm/TransactionForm'
-import type { AssetType } from '@/types/commonTypes'
+import type { AssetType } from '@/types/commonTypes.types'
 
 interface ModalTransactionsProps {
     isOpen: boolean

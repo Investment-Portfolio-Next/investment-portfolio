@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { AssetType } from '@/types/commonTypes'
+import type { AssetType } from '@/types/commonTypes.types'
 import { assetQueries } from '../queries/assetQueries'
 
 export const useAssetSearch = (query: string, assetType: AssetType) => {

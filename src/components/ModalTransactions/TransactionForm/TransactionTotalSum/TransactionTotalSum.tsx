@@ -1,5 +1,5 @@
 import { getCurrencySymbol } from '@/utils/helper'
-import type { CurrencyType } from '@/types/commonTypes'
+import type { CurrencyType } from '@/types/commonTypes.types'
 
 interface TransactionTotalSumProps {
     typeOfTransaction: string

@@ -27,7 +27,7 @@ import type {
     HistoricalPriceResultAlphavantage,
     HistoricalPriceResultCoingecko,
 } from './ISINsearch.types'
-import type { AssetType } from '@/types/commonTypes'
+import type { AssetType } from '@/types/commonTypes.types'
 import { formatDateToInput } from '@/utils/helper'
 import { API_CONFIGS, API_KEYS } from './ISINsearch.config'
 

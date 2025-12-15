@@ -1,4 +1,4 @@
-import type { CurrencyType } from '@/types/commonTypes'
+import type { CurrencyType } from '@/types/commonTypes.types'
 
 export interface ITransactionForm {
     assetTicker: { symbol: string; name: string }

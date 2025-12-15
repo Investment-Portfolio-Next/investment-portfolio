@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes } from 'react'
 import type { UseFormRegisterReturn, UseFormSetValue, PathValue } from 'react-hook-form'
-import type { FieldVariant } from '@/types/commonTypes'
+import type { FieldVariant } from '@/types/commonTypes.types'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { X, LoaderCircle } from 'lucide-react'
 import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'

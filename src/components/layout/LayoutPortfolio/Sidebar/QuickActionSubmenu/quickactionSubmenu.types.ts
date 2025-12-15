@@ -1,4 +1,4 @@
-import type { AssetType } from '@/types/commonTypes'
+import type { AssetType } from '@/types/commonTypes.types'
 
 export interface IQuickActionItem {
     id: string

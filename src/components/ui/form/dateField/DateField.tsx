@@ -1,7 +1,7 @@
 import type { InputHTMLAttributes } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import { Calendar } from 'lucide-react'
-import type { FieldVariant } from '@/types/commonTypes'
+import type { FieldVariant } from '@/types/commonTypes.types'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'
 

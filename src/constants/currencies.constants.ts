@@ -1,4 +1,4 @@
-import type { CurrencyMeta } from '@/types/commonTypes'
+import type { CurrencyMeta } from '@/types/commonTypes.types'
 
 export const currencyOptions: CurrencyMeta[] = [
     { value: 'USD', label: 'US Dollar', symbol: '$' },

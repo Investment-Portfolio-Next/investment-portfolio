@@ -1,7 +1,7 @@
 import { queryClient } from '../queryClient'
 import type { AssetIdentifier, APIProvider, TransactionDate } from '../ISINsearchApi/ISINsearch.types'
 import { searchAssets, searchCurrentPrice, searchHistoricalPrice } from '../ISINsearchApi/apiSearchISIN'
-import type { AssetType } from '@/types/commonTypes'
+import type { AssetType } from '@/types/commonTypes.types'
 
 export const assetQueries = {
     assetSearch: (query: string, assetType: AssetType) => ({
