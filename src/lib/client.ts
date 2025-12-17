@@ -20,11 +20,7 @@ client.interceptors.request.use(
     (request) => request,
 
     (requestError) => {
-        return Promise.reject({
-            type: 'request',
-            message: 'Failed to send the request',
-            details: requestError instanceof Error ? requestError.message : requestError,
-        })
+        return Promise.reject(requestError)
     },
 )
 
@@ -35,11 +31,7 @@ client.interceptors.response.use(
     (response) => response,
 
     (responseError) => {
-        return Promise.reject({
-            type: 'response',
-            message: 'Failed to send the request',
-            details: responseError instanceof Error ? responseError.message : responseError,
-        })
+        return Promise.reject(responseError)
     },
 )
 

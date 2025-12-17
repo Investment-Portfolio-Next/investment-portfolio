@@ -5,30 +5,25 @@ import { useEffect } from 'react'
 import { X } from 'lucide-react'
 
 interface ModalProps {
-    isOpen: boolean
     onClose: () => void
     modalTitle?: string
     children: React.ReactNode
 }
 
-export function Modal({ isOpen, onClose, modalTitle, children }: ModalProps) {
+export function Modal({ onClose, modalTitle, children }: ModalProps) {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose()
         }
 
-        if (isOpen) {
-            document.addEventListener('keydown', handleKeyDown)
-            document.body.style.overflow = 'hidden'
-        }
+        document.addEventListener('keydown', handleKeyDown)
+        document.body.style.overflow = 'hidden'
 
         return () => {
             document.removeEventListener('keydown', handleKeyDown)
             document.body.style.overflow = ''
         }
-    }, [isOpen, onClose])
-
-    if (!isOpen) return null
+    }, [onClose])
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">

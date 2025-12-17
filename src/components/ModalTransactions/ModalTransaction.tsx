@@ -5,16 +5,17 @@ import { TransactionsForm } from './TransactionForm/TransactionForm'
 import type { AssetType } from '@/types/commonTypes.types'
 
 interface ModalTransactionsProps {
-    isOpen: boolean
     onClose: () => void
+    onSuccess: () => void
+    onError: (error: unknown) => void
     modalTitle: string
     assetType: AssetType
 }
 
-export function ModalTransactions({ isOpen, onClose, modalTitle, assetType }: ModalTransactionsProps) {
+export function ModalTransactions({ onClose, onSuccess, onError, modalTitle, assetType }: ModalTransactionsProps) {
     return (
-        <Modal isOpen={isOpen} onClose={onClose} modalTitle={modalTitle}>
-            <TransactionsForm assetType={assetType} onClose={onClose} />
+        <Modal onClose={onClose} modalTitle={modalTitle}>
+            <TransactionsForm onClose={onClose} assetType={assetType} onSuccess={onSuccess} onError={onError} />
         </Modal>
     )
 }

@@ -16,13 +16,16 @@ import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
 import { SearchField } from '@/ui/form/searchField/SearchField'
 import { useAsset } from '@/store/useAsset'
 import { DateField } from '@/ui/form/dateField/DateField'
+import { createStockTransaction } from '@/api/client/stockTransactions.client'
 
 interface TransactionsFormProps {
     assetType: AssetType
     onClose: () => void
+    onSuccess: () => void
+    onError: (error: unknown) => void
 }
 
-export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
+export function TransactionsForm({ assetType, onClose, onSuccess, onError }: TransactionsFormProps) {
     const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice } = useAsset()
 
     const accountOpenDate = new Date('2020-01-01') //TODO: set real data later: date of account creation
@@ -125,11 +128,16 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             provider,
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
         console.log(submissionData)
-        reset()
-        onClose()
+
+        try {
+            if (assetType === 'stock') await createStockTransaction(submissionData)
+            reset()
+            onSuccess()
+        } catch (error) {
+            console.error(error)
+            onError(error)
+        }
     }
 
     return (

@@ -5,3 +5,9 @@ export interface IQuickActionItem {
     label: string
     type: AssetType
 }
+
+export type FlowState =
+    | { type: 'form'; actionId: string }
+    | { type: 'success'; message?: string }
+    | { type: 'error'; message?: string }
+    | null
