@@ -2,6 +2,7 @@
 
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
+import { normalizeError } from '../errors/normalizeError'
 
 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -20,7 +21,7 @@ client.interceptors.request.use(
     (request) => request,
 
     (requestError) => {
-        return Promise.reject(requestError)
+        return Promise.reject(normalizeError(requestError))
     },
 )
 
@@ -31,7 +32,7 @@ client.interceptors.response.use(
     (response) => response,
 
     (responseError) => {
-        return Promise.reject(responseError)
+        return Promise.reject(normalizeError(responseError))
     },
 )
 

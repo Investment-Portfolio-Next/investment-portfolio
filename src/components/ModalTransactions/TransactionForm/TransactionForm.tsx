@@ -17,12 +17,13 @@ import { SearchField } from '@/ui/form/searchField/SearchField'
 import { useAsset } from '@/store/useAsset'
 import { DateField } from '@/ui/form/dateField/DateField'
 import { createStockTransaction } from '@/api/client/stockTransactions.client'
+import type { IDomainError } from '@/lib/errors/domainError.types'
 
 interface TransactionsFormProps {
     assetType: AssetType
     onClose: () => void
     onSuccess: () => void
-    onError: (error: unknown) => void
+    onError: (error: IDomainError) => void
 }
 
 export function TransactionsForm({ assetType, onClose, onSuccess, onError }: TransactionsFormProps) {
@@ -134,9 +135,9 @@ export function TransactionsForm({ assetType, onClose, onSuccess, onError }: Tra
             if (assetType === 'stock') await createStockTransaction(submissionData)
             reset()
             onSuccess()
-        } catch (error) {
+        } catch (error: unknown) {
             console.error(error)
-            onError(error)
+            onError(error as IDomainError)
         }
     }
 

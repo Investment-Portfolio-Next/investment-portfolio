@@ -1,4 +1,4 @@
-import { client } from '@/lib/client'
+import { client } from '@/lib/api/client'
 
 export const createStockTransaction = (data: unknown) => client.post('/stock_transactions/', data).then((r) => r.data)
 

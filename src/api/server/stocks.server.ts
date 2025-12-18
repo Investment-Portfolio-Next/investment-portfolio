@@ -1,4 +1,4 @@
-import { serverFetch } from '@/lib/serverFetch'
+import { serverFetch } from '@/lib/api/serverFetch'
 import type { Stock } from '@/types/stockTypes/stock.types'
 
 const baseURL = process.env.API_BASE_URL

@@ -1,4 +1,4 @@
-import type { ServerFetchError } from '@/types/serverError.types'
+import { normalizeError } from '@/lib/errors/normalizeError'
 
 export const serverFetch = async <T>(input: RequestInfo, init?: RequestInit): Promise<T> => {
     let response: Response
@@ -6,11 +6,12 @@ export const serverFetch = async <T>(input: RequestInfo, init?: RequestInit): Pr
     try {
         response = await fetch(input, init)
     } catch (error) {
-        throw {
-            type: 'fetch',
-            message: 'Network error',
+        // network-level: fetch did not get any response
+        throw normalizeError({
+            type: 'network',
+            message: 'Network error. Check connection',
             details: error,
-        } satisfies ServerFetchError
+        })
     }
 
     if (!response.ok) {
@@ -24,12 +25,13 @@ export const serverFetch = async <T>(input: RequestInfo, init?: RequestInit): Pr
             }
         }
 
-        throw {
-            type: 'fetch',
+        // HTTP-level: fetch got response, but status ia bad
+        throw normalizeError({
+            type: 'server',
             status: response.status,
-            message: 'Server responded with an error',
+            message: 'Server error. Please try again later.',
             details,
-        } satisfies ServerFetchError
+        })
     }
 
     return response.json() as Promise<T>

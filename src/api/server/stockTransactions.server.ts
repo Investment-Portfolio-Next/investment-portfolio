@@ -1,4 +1,4 @@
-import { serverFetch } from '@/lib/serverFetch'
+import { serverFetch } from '@/lib/api/serverFetch'
 import type { StockTransaction } from '@/types/transactionTypes/stockTransaction.types'
 import type { StockTransactionListResponse } from '@/types/transactionTypes/stockTransactionListResponse.types'
 

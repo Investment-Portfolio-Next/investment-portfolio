@@ -3,11 +3,12 @@
 import { Modal } from '@/components/ui/modal/Modal'
 import { TransactionsForm } from './TransactionForm/TransactionForm'
 import type { AssetType } from '@/types/commonTypes.types'
+import type { IDomainError } from '@/lib/errors/domainError.types'
 
 interface ModalTransactionsProps {
     onClose: () => void
     onSuccess: () => void
-    onError: (error: unknown) => void
+    onError: (error: IDomainError) => void
     modalTitle: string
     assetType: AssetType
 }
