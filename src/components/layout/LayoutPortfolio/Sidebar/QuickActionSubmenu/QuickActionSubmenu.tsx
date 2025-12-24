@@ -7,7 +7,7 @@ import { ModalTransactions } from '../../../../ModalTransactions/ModalTransactio
 import { SuccessModal } from '@/components/shared/modals/SuccessModal'
 import { ErrorModal } from '@/components/shared/modals/ErrorModal'
 import { useAsset } from '@/store/useAsset'
-import type { IDomainError } from '@/lib/errors/domainError.types'
+import type { INormalizedError } from '@/lib/errors/error.types'
 
 interface QuickActionSubmenuProps {
     closeSubmenu: () => void
@@ -32,7 +32,7 @@ export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
         setFlow({ type: 'form', actionId: openModalId })
     }
 
-    const handleError = (error: IDomainError) => {
+    const handleError = (error: INormalizedError) => {
         setFlow({
             type: 'error',
             message: error.message,

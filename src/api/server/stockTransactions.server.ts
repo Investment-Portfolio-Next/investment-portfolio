@@ -1,6 +1,5 @@
 import { serverFetch } from '@/lib/api/serverFetch'
-import type { StockTransaction } from '@/types/transactionTypes/stockTransaction.types'
-import type { StockTransactionListResponse } from '@/types/transactionTypes/stockTransactionListResponse.types'
+import type { StockTransaction, StockTransactionListResponse } from '@/types/transactionTypes/stockTransaction.types'
 
 const baseURL = process.env.API_BASE_URL
 

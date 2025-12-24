@@ -1,5 +1,7 @@
 import type { CurrencyType } from '../commonTypes.types'
 
+export type StockTransactionListResponse = StockTransaction[]
+
 export type StockTransaction = {
     asset_type: string
     provider: string

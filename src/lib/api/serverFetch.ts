@@ -1,5 +1,3 @@
-import { normalizeError } from '@/lib/errors/normalizeError'
-
 export const serverFetch = async <T>(input: RequestInfo, init?: RequestInit): Promise<T> => {
     let response: Response
 
@@ -7,31 +5,33 @@ export const serverFetch = async <T>(input: RequestInfo, init?: RequestInit): Pr
         response = await fetch(input, init)
     } catch (error) {
         // network-level: fetch did not get any response
-        throw normalizeError({
-            type: 'network',
-            message: 'Network error. Check connection',
-            details: error,
+        throw new Error('Network error. Check connection.', {
+            cause: {
+                type: 'network',
+                details: error,
+            },
         })
     }
 
     if (!response.ok) {
-        let details: unknown = null
-
-        try {
-            details = await response.json()
-        } catch (error) {
-            if (process.env.NODE_ENV === 'development') {
-                console.warn('Failed to parse error response JSON', error)
-            }
+        // HTTP-level: fetch got response, but status ia bad
+        if (response.status === 401) {
+            throw new Error('You are not authorized.')
         }
 
-        // HTTP-level: fetch got response, but status ia bad
-        throw normalizeError({
-            type: 'server',
-            status: response.status,
-            message: 'Server error. Please try again later.',
-            details,
-        })
+        if (response.status === 403) {
+            throw new Error('You do not have permission to perform this action.')
+        }
+
+        if (response.status === 422) {
+            throw new Error('Please check the entered data.')
+        }
+
+        if (response.status >= 500) {
+            throw new Error('Server error. Please try again later.')
+        }
+
+        throw new Error('Request failed.')
     }
 
     return response.json() as Promise<T>

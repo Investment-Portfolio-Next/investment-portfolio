@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+// import { Slot } from '@radix-ui/react-slot'
 import '@/styles/custom-styles.scss'
 
 type ButtonStyleVariant =
@@ -11,6 +12,7 @@ type ButtonStyleVariant =
 type ButtonSizeVariant = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    // asChild?: boolean
     isLoading?: boolean
     isSubmitting?: boolean
     children: ReactNode
@@ -36,7 +38,9 @@ const sizeClasses = {
 }
 
 export function Button({
+    // asChild = false,
     children,
+    // type = 'button',
     isLoading = false,
     isSubmitting = false,
     variant = 'primaryFull',
@@ -45,6 +49,8 @@ export function Button({
     disabled,
     ...props
 }: ButtonProps) {
+    // const Component = asChild ? Slot : 'button'
+
     const baseClasses =
         'rounded transition-colors disabled:opacity-50 disabled:cursor-default font-medium min-w-[160px]'
 
@@ -55,4 +61,15 @@ export function Button({
             {isLoading ? 'Loading...' : isSubmitting ? 'Submitting...' : children}
         </button>
     )
+
+    // return (
+    //     <Component
+    //         className={combinedClassName}
+    //         disabled={!asChild ? isLoading || isSubmitting || disabled : undefined}
+    //         type={!asChild ? type : undefined}
+    //         {...props}
+    //     >
+    //         {isLoading ? 'Loading...' : isSubmitting ? 'Submitting...' : children}
+    //     </Component>
+    // )
 }
