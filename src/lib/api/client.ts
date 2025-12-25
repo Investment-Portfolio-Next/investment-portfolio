@@ -6,7 +6,7 @@ import { normalizeError } from '../errors/normalizeError'
 
 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-const client: AxiosInstance = axios.create({
+const clientAxios: AxiosInstance = axios.create({
     baseURL,
     timeout: 10000,
     headers: {
@@ -17,7 +17,7 @@ const client: AxiosInstance = axios.create({
 // -------------------------------------------------
 // request interceptors
 
-client.interceptors.request.use(
+clientAxios.interceptors.request.use(
     (request) => request,
 
     (requestError) => {
@@ -28,7 +28,7 @@ client.interceptors.request.use(
 // -------------------------------------------------
 // response interceptors
 
-client.interceptors.response.use(
+clientAxios.interceptors.response.use(
     (response) => response,
 
     (responseError) => {
@@ -36,4 +36,4 @@ client.interceptors.response.use(
     },
 )
 
-export { client }
+export { clientAxios }

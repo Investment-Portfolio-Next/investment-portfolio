@@ -1,12 +1,6 @@
 import { create } from 'zustand'
-import type {
-    SearchResult,
-    APIProvider,
-    AssetIdentifier,
-    AssetPrice,
-    TransactionDate,
-} from '@/services/ISINsearchApi/ISINsearch.types'
-import { assetQueries } from '@/services/queries/assetQueries'
+import type { SearchResult, APIProvider, AssetIdentifier, AssetPrice, TransactionDate } from '@/api/public/public.types'
+import { assetQueries } from '@/services/assetQueries'
 import { formatDateToInput } from '@/utils/helper'
 
 interface Asset {
