@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { SearchResult, APIProvider, AssetIdentifier, AssetPrice, TransactionDate } from '@/api/public/public.types'
-import { assetQueries } from '@/services/assetQueries'
+import { assetQueries } from '@/services/publicQueries/assetQueries'
 import { formatDateToInput } from '@/utils/helper'
 
 interface Asset {
@@ -156,7 +156,11 @@ export const useAsset = create<AssetState>((set, get) => ({
         }
     },
 
-    clearAsset: () => set({ asset: null, isLoadingPrice: false, priceError: null }),
+    clearAsset: () => {
+        set({ asset: null, isLoadingPrice: false, priceError: null })
+        // const { asset } = get()
+        // console.log('asset', asset)
+    },
 
     clearPriceError: () => set({ isLoadingPrice: false, priceError: null }),
 }))

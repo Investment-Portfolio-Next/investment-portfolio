@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
-import { getStockTransactionByIdServer } from '@/api/server/stockTransactions.server'
+import { getTransactionByIdServer } from '@/api/server/stockTransactions.server'
 
 export const metadata: Metadata = {
     title: 'Quotes',
 }
 
 export default async function Quotes() {
-    const res = await getStockTransactionByIdServer('0')
+    const res = await getTransactionByIdServer('1', 'stock')
+    console.log('res', res)
 
     return (
         <div>

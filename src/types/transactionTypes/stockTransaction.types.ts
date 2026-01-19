@@ -1,9 +1,11 @@
-import type { CurrencyType } from '../commonTypes.types'
+import type { AssetType, CurrencyType } from '../commonTypes.types'
 
-export type StockTransactionListResponse = StockTransaction[]
+export type TransactionListResponse = Transaction[]
 
-export type StockTransaction = {
-    asset_type: string
+export type Transaction = StockTransaction | EtfTransaction | CryptoTransaction | BondTransaction
+
+type BaseTransaction = {
+    asset_type: AssetType
     provider: string
     initial_price: number
     transaction_commission: number
@@ -14,4 +16,23 @@ export type StockTransaction = {
     transaction_id: number
     asset_ticker: string
     notes?: string
+}
+
+export type StockTransaction = BaseTransaction & {
+    asset_type: 'stock'
+}
+
+export type EtfTransaction = BaseTransaction & {
+    asset_type: 'etf'
+}
+
+export type CryptoTransaction = BaseTransaction & {
+    asset_type: 'crypto'
+}
+
+export type BondTransaction = BaseTransaction & {
+    asset_type: 'bond'
+    bondNominal: number
+    bondAccruedInterest: number
+    isAccruedInterestPerBond: boolean
 }

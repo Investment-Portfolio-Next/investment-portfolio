@@ -1,5 +1,5 @@
-import { queryClient } from './queryClient'
-import type { AssetIdentifier, APIProvider, TransactionDate } from '../api/public/public.types'
+import { queryClient } from '../queryClient'
+import type { AssetIdentifier, APIProvider, TransactionDate } from '../../api/public/public.types'
 import type { AssetType } from '@/types/commonTypes.types'
 import { searchAssets } from '@/api/public/asset-search/asset-search'
 import { searchCurrentPrice } from '@/api/public/current-price-search/current-price-search'

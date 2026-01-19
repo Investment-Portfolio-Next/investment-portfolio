@@ -9,15 +9,15 @@ import { formatDateToInput } from '@/utils/helper'
 import { Button } from '@/components/ui/button/Button'
 import type { SubmitHandler } from 'react-hook-form'
 import type { AssetType } from '@/types/commonTypes.types'
-import type { ITransactionForm } from './transactionForm.types'
+import type { ITransactionForm, ITransactionSubmit } from './transactionForm.types'
 import { transactionTypeOptions, transactionCurrencyOptions } from './transactionsOptions.data'
 import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
 import { SearchField } from '@/ui/form/searchField/SearchField'
 import { useAsset } from '@/store/useAsset'
 import { DateField } from '@/ui/form/dateField/DateField'
-import { createStockTransaction } from '@/api/client/stockTransactions.client'
 import type { INormalizedError } from '@/lib/errors/error.types'
+import { useCreateTransaction } from '@/services/clientQueries/query-hooks/useCreateTransaction'
 
 interface TransactionsFormProps {
     assetType: AssetType
@@ -27,7 +27,8 @@ interface TransactionsFormProps {
 }
 
 export function TransactionsForm({ assetType, onClose, onSuccess, onError }: TransactionsFormProps) {
-    const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice } = useAsset()
+    const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice, clearAsset } = useAsset()
+    const { mutateAsync: createTransaction } = useCreateTransaction(assetType)
 
     const accountOpenDate = new Date('2020-01-01') //TODO: set real data later: date of account creation
     const assetQuantityLimit = 999999999999999 // TODO: check if the limit is necessary
@@ -121,10 +122,10 @@ export function TransactionsForm({ assetType, onClose, onSuccess, onError }: Tra
     }, [unregister, isBond])
 
     const onSubmit: SubmitHandler<ITransactionForm> = async (data) => {
-        const provider = asset?.provider
-        const submissionData = {
+        const provider = asset?.provider ?? null
+        const submissionData: ITransactionSubmit = {
             ...data,
-            assetTicker: data.assetTicker.symbol,
+            // assetTicker: data.assetTicker.symbol,
             assetType,
             provider,
         }
@@ -132,10 +133,11 @@ export function TransactionsForm({ assetType, onClose, onSuccess, onError }: Tra
         console.log(submissionData)
 
         try {
-            if (assetType === 'stock') await createStockTransaction(submissionData)
+            await createTransaction(submissionData)
+
             reset()
             onSuccess()
-            // TODO: clearance zustand state
+            clearAsset()
         } catch (error: unknown) {
             console.error(error)
             onError(error as INormalizedError)

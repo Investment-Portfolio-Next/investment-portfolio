@@ -7,7 +7,7 @@ import { X } from 'lucide-react'
 import { LoaderCircle } from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
 import type { SearchResult } from '@/api/public/public.types'
-import { useAssetSearch } from '@/services/query-hooks/useAssetSearch'
+import { useAssetSearch } from '@/services/publicQueries/query-hooks/useAssetSearch'
 import { useAsset } from '@/store/useAsset'
 import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'
 

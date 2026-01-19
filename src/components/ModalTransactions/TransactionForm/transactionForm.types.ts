@@ -1,4 +1,5 @@
-import type { CurrencyType } from '@/types/commonTypes.types'
+import type { CurrencyType, AssetType } from '@/types/commonTypes.types'
+import type { APIProvider } from '@/api/public/public.types'
 
 export interface ITransactionForm {
     assetTicker: { symbol: string; name: string }
@@ -12,4 +13,9 @@ export interface ITransactionForm {
     bondAccruedInterest?: number | null
     isAccruedInterestPerBond?: boolean
     notes?: string
+}
+
+export interface ITransactionSubmit extends ITransactionForm {
+    assetType: AssetType
+    provider: APIProvider | null
 }
