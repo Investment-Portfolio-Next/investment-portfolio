@@ -11,6 +11,8 @@ if (!baseURL) {
 }
 
 export const getTransactionListServer = async (assetType: AssetType) => {
+    console.log('SERVER FETCH transaction list', assetType, Date.now())
+
     return serverFetch<TransactionListResponse>(`${baseURL}${TRANSACTION_BASE_PATH[assetType]}/`, {
         next: {
             revalidate: 60,
