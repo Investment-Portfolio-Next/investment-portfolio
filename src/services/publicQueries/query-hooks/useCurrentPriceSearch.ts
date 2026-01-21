@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import type { AssetIdentifier, APIProvider } from './transaction.types'
-import { assetQueries } from '../queries/assetQueries'
+import type { AssetIdentifier, APIProvider } from '@/api/public/public.types'
+import { assetQueries } from '../assetQueries'
 
 export const useCurrentPriceSearch = (assetIdentifier: AssetIdentifier, provider: APIProvider) => {
     return useQuery({

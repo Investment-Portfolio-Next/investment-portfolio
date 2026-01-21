@@ -5,7 +5,7 @@ import { Check } from 'lucide-react'
 
 type CheckboxVariant = 'primary' | 'secondary'
 
-interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
+interface ICheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string
     registration: UseFormRegisterReturn
     error?: string
@@ -23,7 +23,7 @@ const variantStyles: Record<CheckboxVariant, { box: string; icon: string }> = {
     },
 }
 
-export function Checkbox({ label, registration, error, variant = 'primary', ...props }: CheckboxProps) {
+export function Checkbox({ label, registration, error, variant = 'primary', ...props }: ICheckboxProps) {
     const styles = variantStyles[variant]
 
     return (

@@ -5,7 +5,7 @@ import { isFuture, parse, isBefore, format } from 'date-fns'
 type ValidationRules = {
     [K in keyof ITransactionForm]?: RegisterOptions<ITransactionForm, K>
 }
-interface ValidationParams {
+interface IValidationParams {
     accountOpenDate: Date
     assetQuantityLimit: number
     isBond: boolean
@@ -40,9 +40,9 @@ export const getValidationRules = ({
     accountOpenDate,
     assetQuantityLimit,
     isBond,
-}: ValidationParams): ValidationRules => {
+}: IValidationParams): ValidationRules => {
     const rules: ValidationRules = {
-        symbolID: {
+        assetTicker: {
             validate: (value?: { symbol?: string; name?: string }) => {
                 const symbol = value?.symbol ?? ''
                 if (!symbol || symbol.trim() === '') return 'Asset ID is required'
@@ -81,7 +81,7 @@ export const getValidationRules = ({
                 return true
             },
         },
-        transactionCommision: {
+        transactionCommission: {
             required: 'Commission is required',
             valueAsNumber: true,
             validate: (value?: number | null, formValues?: ITransactionForm) => {

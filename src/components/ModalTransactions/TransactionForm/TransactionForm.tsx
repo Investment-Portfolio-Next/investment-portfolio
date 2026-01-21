@@ -8,22 +8,27 @@ import { Checkbox } from '@/components/ui/form/checkbox/Checkbox'
 import { formatDateToInput } from '@/utils/helper'
 import { Button } from '@/components/ui/button/Button'
 import type { SubmitHandler } from 'react-hook-form'
-import type { AssetType } from '@/types/commonTypes'
-import type { ITransactionForm } from './transactionForm.types'
+import type { AssetType } from '@/types/commonTypes.types'
+import type { ITransactionForm, ITransactionSubmit } from './transactionForm.types'
 import { transactionTypeOptions, transactionCurrencyOptions } from './transactionsOptions.data'
 import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
 import { SearchField } from '@/ui/form/searchField/SearchField'
 import { useAsset } from '@/store/useAsset'
 import { DateField } from '@/ui/form/dateField/DateField'
+import type { INormalizedError } from '@/lib/errors/error.types'
+import { useCreateTransaction } from '@/services/clientQueries/query-hooks/useCreateTransaction'
 
-interface TransactionsFormProps {
+interface ITransactionsFormProps {
     assetType: AssetType
     onClose: () => void
+    onSuccess: () => void
+    onError: (error: INormalizedError) => void
 }
 
-export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) {
-    const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice } = useAsset()
+export function TransactionsForm({ assetType, onClose, onSuccess, onError }: ITransactionsFormProps) {
+    const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice, clearAsset } = useAsset()
+    const { mutateAsync: createTransaction } = useCreateTransaction(assetType)
 
     const accountOpenDate = new Date('2020-01-01') //TODO: set real data later: date of account creation
     const assetQuantityLimit = 999999999999999 // TODO: check if the limit is necessary
@@ -35,12 +40,12 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
         isBond,
     })
     const defaultValues: ITransactionForm = {
-        symbolID: { symbol: '', name: '' },
+        assetTicker: { symbol: '', name: '' },
         transactionType: 'buy',
         transactionCurrency: 'USD',
         transactionDate: formatDateToInput(new Date()),
         initialPrice: null,
-        transactionCommision: null,
+        transactionCommission: null,
         transactionQuantity: null,
         bondNominal: null,
         bondAccruedInterest: null,
@@ -67,7 +72,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     const price = useWatch({ control, name: 'initialPrice' })
     const quantity = useWatch({ control, name: 'transactionQuantity' })
     // const dateOfTransaction = useWatch({ control, name: 'transactionDate' })
-    const commission = useWatch({ control, name: 'transactionCommision' })
+    const commission = useWatch({ control, name: 'transactionCommission' })
     const bondNominal = useWatch({ control, name: 'bondNominal' })
     const accruedInterest = useWatch({ control, name: 'bondAccruedInterest' })
     const accruedPerBond = useWatch({ control, name: 'isAccruedInterestPerBond' })
@@ -94,7 +99,7 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
             'transactionQuantity',
             'transactionDate',
             'initialPrice',
-            'transactionCommision',
+            'transactionCommission',
             'transactionCurrency',
             'notes',
             ...(isBond ? (['bondNominal', 'bondAccruedInterest', 'isAccruedInterestPerBond'] as const) : []),
@@ -117,19 +122,26 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
     }, [unregister, isBond])
 
     const onSubmit: SubmitHandler<ITransactionForm> = async (data) => {
-        const provider = asset?.provider
-        const submissionData = {
+        const provider = asset?.provider ?? null
+        const submissionData: ITransactionSubmit = {
             ...data,
-            symbolID: data.symbolID.symbol,
+            // assetTicker: data.assetTicker.symbol,
             assetType,
             provider,
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
         console.log(submissionData)
-        reset()
-        onClose()
+
+        try {
+            await createTransaction(submissionData)
+
+            reset()
+            onSuccess()
+            clearAsset()
+        } catch (error: unknown) {
+            console.error(error)
+            onError(error as INormalizedError)
+        }
     }
 
     return (
@@ -142,8 +154,8 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                 resetFieldsForSearch={resetFieldsForSearch}
                 setValue={setValue}
                 control={control}
-                name={'symbolID'}
-                rules={validations.symbolID}
+                name={'assetTicker'}
+                rules={validations.assetTicker}
             />
             <div className="grid grid-cols-3 gap-4">
                 <SelectField
@@ -197,8 +209,8 @@ export function TransactionsForm({ assetType, onClose }: TransactionsFormProps) 
                     label="Commission"
                     type="number"
                     step="any"
-                    registration={register('transactionCommision', validations.transactionCommision)}
-                    errors={errors.transactionCommision?.message}
+                    registration={register('transactionCommission', validations.transactionCommission)}
+                    errors={errors.transactionCommission?.message}
                     fieldValue={commission}
                     handleClearValue={handleClearValue}
                     setValue={setValue}

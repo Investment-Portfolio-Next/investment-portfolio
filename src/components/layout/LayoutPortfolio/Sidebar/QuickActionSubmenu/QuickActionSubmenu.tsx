@@ -2,18 +2,21 @@
 
 import { useState } from 'react'
 import { QUICK_ACTION_DATA } from './quickactionSubmenu.data'
-import type { IQuickActionItem } from './quickactionSubmenu.types'
+import type { IQuickActionItem, FlowState } from './quickactionSubmenu.types'
 import { ModalTransactions } from '../../../../ModalTransactions/ModalTransaction'
-// import { SuccessModal } from '@/components/shared/modals/SuccessModal'
-// import { ErrorModal } from '@/components/shared/modals/ErrorModal'
+import { SuccessModal } from '@/components/shared/modals/SuccessModal'
+import { ErrorModal } from '@/components/shared/modals/ErrorModal'
 import { useAsset } from '@/store/useAsset'
+import type { INormalizedError } from '@/lib/errors/error.types'
 
-interface QuickActionSubmenuProps {
+interface IQuickActionSubmenuProps {
     closeSubmenu: () => void
 }
 
-export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
+export function QuickActionSubmenu({ closeSubmenu }: IQuickActionSubmenuProps) {
     const [openModalId, setOpenModalId] = useState<string | null>(null)
+    const [flow, setFlow] = useState<FlowState>(null)
+
     const clearAsset = useAsset((state) => state.clearAsset)
 
     const activeItem = QUICK_ACTION_DATA.find((item) => item.id === openModalId)
@@ -24,25 +27,55 @@ export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
         clearAsset()
     }
 
+    const handleOnCloseOnError = () => {
+        if (!openModalId) return
+        setFlow({ type: 'form', actionId: openModalId })
+    }
+
+    const handleError = (error: INormalizedError) => {
+        setFlow({
+            type: 'error',
+            message: error.message,
+        })
+    }
+
+    const handleSuccess = () => {
+        setFlow({ type: 'success', message: 'Your transaction has been successfully saved' })
+    }
+
     return (
         <>
             <ul className="bg-sidebar flex flex-col py-4 px-layout border-l-2 border-l-primaryLight rounded-tr-md rounded-br-md pl-5 ">
                 {QUICK_ACTION_DATA.map((item: IQuickActionItem) => (
                     <li key={item.id} className="whitespace-nowrap py-2 hover:text-primaryLight">
-                        <button onClick={() => setOpenModalId(item.id)}>{item.label}</button>
+                        <button
+                            onClick={() => {
+                                setOpenModalId(item.id)
+                                setFlow({ type: 'form', actionId: item.id })
+                            }}
+                        >
+                            {item.label}
+                        </button>
                     </li>
                 ))}
             </ul>
 
-            {activeItem && (
+            {(flow?.type === 'form' || flow?.type === 'error') && activeItem && (
                 <ModalTransactions
-                    isOpen={!!openModalId}
-                    onClose={() => handleOnClose()}
+                    onClose={handleOnClose}
+                    onSuccess={handleSuccess}
+                    onError={handleError}
                     modalTitle={activeItem.label}
                     assetType={activeItem.type}
                 />
-                // <SuccessModal isOpen={!!openModalId} onClose={() => handleOnClose()} />
-                // <ErrorModal isOpen={!!openModalId} onClose={() => handleOnClose()} />
+            )}
+
+            {flow?.type === 'success' && activeItem && (
+                <SuccessModal message={flow?.message} onClose={() => handleOnClose()} />
+            )}
+
+            {flow?.type === 'error' && activeItem && (
+                <ErrorModal message={flow?.message} onClose={() => handleOnCloseOnError()} />
             )}
         </>
     )

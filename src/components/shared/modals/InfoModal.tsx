@@ -5,8 +5,7 @@ import { Modal } from '@/components/ui/modal/Modal'
 import { Check, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button/Button'
 
-interface InfoModalProps {
-    isOpen: boolean
+interface IInfoModalProps {
     onClose: () => void
     type: 'success' | 'error'
     title?: string
@@ -29,12 +28,12 @@ const typeConfig = {
     },
 } as const
 
-export function InfoModal({ isOpen, onClose, type, title, message }: InfoModalProps) {
+export function InfoModal({ onClose, type, title, message }: IInfoModalProps) {
     const { color, defaultTitle, icon, defaultMessage } = typeConfig[type]
     const Icon = icon
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} modalTitle={title ?? defaultTitle}>
+        <Modal onClose={onClose} modalTitle={title ?? defaultTitle}>
             <div className="flex flex-col items-center space-y-8">
                 <div className="flex flex-col items-center text-center">
                     <Icon className={`w-8 h-8 text-lg ${color}`} />

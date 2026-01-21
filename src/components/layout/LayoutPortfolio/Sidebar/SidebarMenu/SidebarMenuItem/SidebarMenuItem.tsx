@@ -1,7 +1,7 @@
 import type { ISidebarItem } from '../sidebarMenu.types'
 import Link from 'next/link'
 
-interface Props {
+interface ISidebarMenuItem {
     item: ISidebarItem
     collapsedMenu: boolean
     buttonRef: React.RefObject<HTMLButtonElement | null>
@@ -10,7 +10,14 @@ interface Props {
     isActive: boolean
 }
 
-export function SidebarMenuItem({ item, collapsedMenu, buttonRef, toggleSubmenu, submenuOpen, isActive }: Props) {
+export function SidebarMenuItem({
+    item,
+    collapsedMenu,
+    buttonRef,
+    toggleSubmenu,
+    submenuOpen,
+    isActive,
+}: ISidebarMenuItem) {
     return (
         <li
             className={`${isActive && 'text-primary'} ${

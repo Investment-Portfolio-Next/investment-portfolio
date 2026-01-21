@@ -2,19 +2,21 @@
 
 import { Modal } from '@/components/ui/modal/Modal'
 import { TransactionsForm } from './TransactionForm/TransactionForm'
-import type { AssetType } from '@/types/commonTypes'
+import type { AssetType } from '@/types/commonTypes.types'
+import type { INormalizedError } from '@/lib/errors/error.types'
 
-interface ModalTransactionsProps {
-    isOpen: boolean
+interface IModalTransactionsProps {
     onClose: () => void
+    onSuccess: () => void
+    onError: (error: INormalizedError) => void
     modalTitle: string
     assetType: AssetType
 }
 
-export function ModalTransactions({ isOpen, onClose, modalTitle, assetType }: ModalTransactionsProps) {
+export function ModalTransactions({ onClose, onSuccess, onError, modalTitle, assetType }: IModalTransactionsProps) {
     return (
-        <Modal isOpen={isOpen} onClose={onClose} modalTitle={modalTitle}>
-            <TransactionsForm assetType={assetType} onClose={onClose} />
+        <Modal onClose={onClose} modalTitle={modalTitle}>
+            <TransactionsForm onClose={onClose} assetType={assetType} onSuccess={onSuccess} onError={onError} />
         </Modal>
     )
 }

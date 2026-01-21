@@ -1,35 +1,35 @@
 import type {
-    SearchResult,
-    TwelveDataSearchResult,
-    FinnhubSearchResult,
-    AlphaVantageSearchResult,
+    ISearchResult,
+    ITwelveDataSearchResult,
+    IFinnhubSearchResult,
+    IAlphaVantageSearchResult,
     DataSearchResults,
     SearchResultUnion,
-    CoinGeckoSearchResult,
-    CoinPaprikaSearchResult,
+    ICoinGeckoSearchResult,
+    ICoinPaprikaSearchResult,
     APIProvider,
-    TwelveDataSearchResponse,
-    FinnhubSearchResponse,
-    AlphaVantageSearchResponse,
-    CoinGeckoSearchResponse,
-    CoinPaprikaSearchResponse,
+    ITwelveDataSearchResponse,
+    IFinnhubSearchResponse,
+    IAlphaVantageSearchResponse,
+    ICoinGeckoSearchResponse,
+    ICoinPaprikaSearchResponse,
     AssetPrice,
     AssetIdentifier,
     CurrentPriceSearchUnion,
-    TwelveDataCurrentPriceSearchResponse,
-    FinnhubCurrentPriceSearchResponse,
-    AlphaVantageCurrentPriceSearchResponse,
-    CoinGeckoCurrentPriceSearchResponse,
-    CoinPaprikaCurrentPriceSearchResponse,
+    ITwelveDataCurrentPriceSearchResponse,
+    IFinnhubCurrentPriceSearchResponse,
+    IAlphaVantageCurrentPriceSearchResponse,
+    ICoinGeckoCurrentPriceSearchResponse,
+    ICoinPaprikaCurrentPriceSearchResponse,
     TransactionDate,
     SearchHistoricalPriceResultUnion,
-    HistoricalPriceResultTwelvedata,
-    HistoricalPriceResultAlphavantage,
-    HistoricalPriceResultCoingecko,
-} from './transaction.types'
-import type { AssetType } from '@/types/commonTypes'
+    IHistoricalPriceResultTwelvedata,
+    IHistoricalPriceResultAlphavantage,
+    IHistoricalPriceResultCoingecko,
+} from './public.types'
+import type { AssetType } from '@/types/commonTypes.types'
 import { formatDateToInput } from '@/utils/helper'
-import { API_CONFIGS, API_KEYS } from './transaction.config'
+import { API_CONFIGS, API_KEYS } from './public.config'
 
 const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean => {
     const type = instrumentType.toLowerCase()
@@ -69,24 +69,24 @@ const matchesAssetType = (instrumentType: string, assetType: AssetType): boolean
     return false
 }
 
-const isTwelveDataResponse = (data: DataSearchResults): data is TwelveDataSearchResponse => {
-    return 'data' in data && Array.isArray((data as TwelveDataSearchResponse).data)
+const isTwelveDataResponse = (data: DataSearchResults): data is ITwelveDataSearchResponse => {
+    return 'data' in data && Array.isArray((data as ITwelveDataSearchResponse).data)
 }
 
-const isFinnhubResponse = (data: DataSearchResults): data is FinnhubSearchResponse => {
-    return 'result' in data && Array.isArray((data as FinnhubSearchResponse).result)
+const isFinnhubResponse = (data: DataSearchResults): data is IFinnhubSearchResponse => {
+    return 'result' in data && Array.isArray((data as IFinnhubSearchResponse).result)
 }
 
-const isAlphaVantageResponse = (data: DataSearchResults): data is AlphaVantageSearchResponse => {
-    return 'bestMatches' in data && Array.isArray((data as AlphaVantageSearchResponse).bestMatches)
+const isAlphaVantageResponse = (data: DataSearchResults): data is IAlphaVantageSearchResponse => {
+    return 'bestMatches' in data && Array.isArray((data as IAlphaVantageSearchResponse).bestMatches)
 }
 
-const isCoinGeckoResponse = (data: DataSearchResults): data is CoinGeckoSearchResponse => {
-    return 'coins' in data && Array.isArray((data as CoinGeckoSearchResponse).coins)
+const isCoinGeckoResponse = (data: DataSearchResults): data is ICoinGeckoSearchResponse => {
+    return 'coins' in data && Array.isArray((data as ICoinGeckoSearchResponse).coins)
 }
 
-const isCoinPaprikaResponse = (data: DataSearchResults): data is CoinPaprikaSearchResponse => {
-    return 'currencies' in data && Array.isArray((data as CoinPaprikaSearchResponse).currencies)
+const isCoinPaprikaResponse = (data: DataSearchResults): data is ICoinPaprikaSearchResponse => {
+    return 'currencies' in data && Array.isArray((data as ICoinPaprikaSearchResponse).currencies)
 }
 //TODO: add isBondsResponse for bonds
 
@@ -111,11 +111,11 @@ const shouldShowSearchItem = (result: SearchResultUnion, assetType: AssetType, p
     let instrumentType: string
 
     if (provider === 'twelvedata') {
-        instrumentType = (result as TwelveDataSearchResult).instrument_type
+        instrumentType = (result as ITwelveDataSearchResult).instrument_type
     } else if (provider === 'finnhub') {
-        instrumentType = (result as FinnhubSearchResult).type
+        instrumentType = (result as IFinnhubSearchResult).type
     } else if (provider === 'alphavantage') {
-        instrumentType = (result as AlphaVantageSearchResult)['3. type']
+        instrumentType = (result as IAlphaVantageSearchResult)['3. type']
     } else {
         return false
     }
@@ -123,55 +123,55 @@ const shouldShowSearchItem = (result: SearchResultUnion, assetType: AssetType, p
     return matchesAssetType(instrumentType, assetType)
 }
 
-const transformSearchResult = (result: SearchResultUnion, provider: APIProvider): SearchResult => {
+const transformSearchResult = (result: SearchResultUnion, provider: APIProvider): ISearchResult => {
     switch (provider) {
         case 'twelvedata': {
-            const res = result as TwelveDataSearchResult
+            const res = result as ITwelveDataSearchResult
             return {
                 id: null,
                 symbol: res.symbol,
                 name: res.instrument_name,
-                type: res.instrument_type,
+                assetType: res.instrument_type,
                 provider: provider,
             }
         }
         case 'finnhub': {
-            const res = result as FinnhubSearchResult
+            const res = result as IFinnhubSearchResult
             return {
                 id: null,
                 symbol: res.symbol,
                 name: res.description,
-                type: res.type,
+                assetType: res.type,
                 provider: provider,
             }
         }
         case 'alphavantage': {
-            const res = result as AlphaVantageSearchResult
+            const res = result as IAlphaVantageSearchResult
             return {
                 id: null,
                 symbol: res['1. symbol'],
                 name: res['2. name'],
-                type: res['3. type'],
+                assetType: res['3. type'],
                 provider: provider,
             }
         }
         case 'coingecko': {
-            const res = result as CoinGeckoSearchResult
+            const res = result as ICoinGeckoSearchResult
             return {
                 id: res.id,
                 symbol: res.symbol,
                 name: res.name,
-                type: 'crypto',
+                assetType: 'crypto',
                 provider: provider,
             }
         }
         case 'coinpaprika': {
-            const res = result as CoinPaprikaSearchResult
+            const res = result as ICoinPaprikaSearchResult
             return {
                 id: res.id,
                 symbol: res.symbol,
                 name: res.name,
-                type: res.type,
+                assetType: res.type,
                 provider: provider,
             }
         }
@@ -185,7 +185,7 @@ export const transformSearchResults = (
     results: DataSearchResults,
     assetType: AssetType,
     provider: APIProvider,
-): SearchResult[] => {
+): ISearchResult[] => {
     const resultArr = extractResultArray(results, provider)
 
     return resultArr
@@ -224,29 +224,29 @@ export const transformCurrentPriceSearchResults = (
     try {
         switch (provider) {
             case 'twelvedata': {
-                const data = priceData as TwelveDataCurrentPriceSearchResponse
+                const data = priceData as ITwelveDataCurrentPriceSearchResponse
                 if (!data.price) return null
                 return parsePrice(data.price)
             }
             case 'finnhub': {
-                const data = priceData as FinnhubCurrentPriceSearchResponse
+                const data = priceData as IFinnhubCurrentPriceSearchResponse
                 if (data.c === undefined || data.c === null) return null
                 return parsePrice(data.c)
             }
             case 'alphavantage': {
-                const data = priceData as AlphaVantageCurrentPriceSearchResponse
+                const data = priceData as IAlphaVantageCurrentPriceSearchResponse
                 if (!data['Global Quote'] || !data['Global Quote']['05. price']) return null
                 return parsePrice(data['Global Quote']['05. price'])
             }
             case 'coingecko': {
-                const data = priceData as CoinGeckoCurrentPriceSearchResponse
+                const data = priceData as ICoinGeckoCurrentPriceSearchResponse
                 const coinData = data[assetIdentifier as keyof typeof data]
                 if (!coinData || typeof coinData !== 'object' || !('usd' in coinData) || !isValidPrice(coinData.usd))
                     return null
                 return coinData.usd
             }
             case 'coinpaprika': {
-                const data = priceData as CoinPaprikaCurrentPriceSearchResponse
+                const data = priceData as ICoinPaprikaCurrentPriceSearchResponse
                 if (!data.quotes?.USD?.price) return null
                 const price = data.quotes.USD.price
                 return isValidPrice(price) ? price : null
@@ -320,7 +320,7 @@ export const transformHistoricalPriceSearchResults = (
     try {
         switch (provider) {
             case 'twelvedata': {
-                const data = historicalData as HistoricalPriceResultTwelvedata
+                const data = historicalData as IHistoricalPriceResultTwelvedata
 
                 if (
                     !data.values ||
@@ -333,7 +333,7 @@ export const transformHistoricalPriceSearchResults = (
             }
 
             case 'alphavantage': {
-                const data = historicalData as HistoricalPriceResultAlphavantage
+                const data = historicalData as IHistoricalPriceResultAlphavantage
 
                 if (!data['Time Series (Daily)']) return null
                 const dayData = data['Time Series (Daily)'][date]
@@ -343,7 +343,7 @@ export const transformHistoricalPriceSearchResults = (
                 return parsePrice(dayData['4. close'])
             }
             case 'coingecko': {
-                const data = historicalData as HistoricalPriceResultCoingecko
+                const data = historicalData as IHistoricalPriceResultCoingecko
 
                 if (!data.market_data?.current_price?.usd) return null
 

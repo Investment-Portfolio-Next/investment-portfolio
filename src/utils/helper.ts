@@ -1,5 +1,6 @@
-import type { CurrencyType } from '@/types/commonTypes'
+import type { CurrencyType } from '@/types/commonTypes.types'
 import { currencyOptions } from '@/constants/currencies.constants'
+// import axios from 'axios'
 
 // Преобразует объект Date в строку формата 'YYYY-MM-DD'
 export function formatDateToInput(date: Date): string {

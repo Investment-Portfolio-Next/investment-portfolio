@@ -1,18 +1,20 @@
 import type { UseFormSetValue, PathValue, Path, Control, RegisterOptions } from 'react-hook-form'
 import { useController } from 'react-hook-form'
-import type { AssetType, FieldVariant } from '@/types/commonTypes'
+import type { AssetType, FieldVariant } from '@/types/commonTypes.types'
 import { useState } from 'react'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import { X } from 'lucide-react'
 import { LoaderCircle } from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
-import type { SearchResult } from '@/services/transactionApi/transaction.types'
-import { useAssetSearch } from '@/services/transactionApi/useAssetSearch'
+import type { ISearchResult } from '@/api/public/public.types'
+import { useAssetSearch } from '@/services/publicQueries/query-hooks/useAssetSearch'
 import { useAsset } from '@/store/useAsset'
 import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'
 
-interface SearchFieldProps<TFieldName extends Path<ITransactionForm>>
-    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'onSelect'> {
+interface SearchFieldProps<TFieldName extends Path<ITransactionForm>> extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'onChange' | 'value' | 'onSelect'
+> {
     control: Control<ITransactionForm>
     name: TFieldName
     rules?: RegisterOptions<ITransactionForm, TFieldName>
@@ -84,7 +86,7 @@ export const SearchField = <TFieldName extends Path<ITransactionForm>>({
         )
     }
 
-    const handleResultSelect = (result: SearchResult) => {
+    const handleResultSelect = (result: ISearchResult) => {
         setHasUserSelected(true)
         setAsset(result)
         setShowResults(false)
@@ -174,7 +176,7 @@ export const SearchField = <TFieldName extends Path<ITransactionForm>>({
                             onClick={() => handleResultSelect(result)}
                         >
                             <div className="font-medium text-sm text-white/90">{result.symbol}</div>
-                            {result.type && <div className="text-xs text-white/30 ">{result.type}</div>}
+                            {result.assetType && <div className="text-xs text-white/30 ">{result.assetType}</div>}
                             <div className="text-xs text-white/70 truncate">{result.name}</div>
                         </div>
                     ))}
