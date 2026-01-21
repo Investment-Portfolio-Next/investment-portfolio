@@ -11,7 +11,7 @@ type ButtonStyleVariant =
     | 'primaryWhite'
 type ButtonSizeVariant = 'sm' | 'md' | 'lg'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     // asChild?: boolean
     isLoading?: boolean
     isSubmitting?: boolean
@@ -48,7 +48,7 @@ export function Button({
     className,
     disabled,
     ...props
-}: ButtonProps) {
+}: IButtonProps) {
     // const Component = asChild ? Slot : 'button'
 
     const baseClasses =

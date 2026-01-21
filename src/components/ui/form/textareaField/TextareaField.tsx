@@ -8,13 +8,13 @@ const variantStyles = {
     secondary: 'border-white focus:border-secondaryDark',
 }
 
-interface TextareaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface ITextareaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     label: string
     errors?: string
     registration: UseFormRegisterReturn
     variant?: TextareaVariant
 }
-export function TextareaField({ label, errors, registration, variant = 'primary', ...props }: TextareaFieldProps) {
+export function TextareaField({ label, errors, registration, variant = 'primary', ...props }: ITextareaFieldProps) {
     const styles = variantStyles[variant]
     return (
         <div>

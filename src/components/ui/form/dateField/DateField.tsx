@@ -5,7 +5,7 @@ import type { FieldVariant } from '@/types/commonTypes.types'
 import { variantStyles } from '@/constants/borderVariants.constants'
 import type { ITransactionForm } from '@/components/ModalTransactions/TransactionForm/transactionForm.types'
 
-interface FieldProps<TFieldName extends keyof ITransactionForm> extends InputHTMLAttributes<HTMLInputElement> {
+interface IFieldProps<TFieldName extends keyof ITransactionForm> extends InputHTMLAttributes<HTMLInputElement> {
     label: string
     errors?: string
     registration: UseFormRegisterReturn<TFieldName>
@@ -18,7 +18,7 @@ export function DateField<TFieldName extends keyof ITransactionForm>({
     registration,
     variant = 'primary',
     ...props
-}: FieldProps<TFieldName>) {
+}: IFieldProps<TFieldName>) {
     const styles = variantStyles[variant]
 
     return (

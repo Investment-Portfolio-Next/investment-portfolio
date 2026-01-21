@@ -4,13 +4,13 @@ import { useEffect } from 'react'
 // import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
-interface ModalProps {
+interface IModalProps {
     onClose: () => void
     modalTitle?: string
     children: React.ReactNode
 }
 
-export function Modal({ onClose, modalTitle, children }: ModalProps) {
+export function Modal({ onClose, modalTitle, children }: IModalProps) {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose()

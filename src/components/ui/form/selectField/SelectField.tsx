@@ -9,7 +9,7 @@ const variantStyles = {
     secondary: 'border-white focus:border-secondaryDark',
 }
 
-interface Option {
+interface IOption {
     label: string
     value: string
 }
@@ -18,7 +18,7 @@ interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement> {
     label: string
     error?: string
     registration: UseFormRegisterReturn
-    options: Option[]
+    options: IOption[]
     variant?: SelectVariant
 }
 

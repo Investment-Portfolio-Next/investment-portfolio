@@ -19,14 +19,14 @@ import { DateField } from '@/ui/form/dateField/DateField'
 import type { INormalizedError } from '@/lib/errors/error.types'
 import { useCreateTransaction } from '@/services/clientQueries/query-hooks/useCreateTransaction'
 
-interface TransactionsFormProps {
+interface ITransactionsFormProps {
     assetType: AssetType
     onClose: () => void
     onSuccess: () => void
     onError: (error: INormalizedError) => void
 }
 
-export function TransactionsForm({ assetType, onClose, onSuccess, onError }: TransactionsFormProps) {
+export function TransactionsForm({ assetType, onClose, onSuccess, onError }: ITransactionsFormProps) {
     const { asset, isLoadingPrice, priceError, setNewDate, clearPriceError, setManualPrice, clearAsset } = useAsset()
     const { mutateAsync: createTransaction } = useCreateTransaction(assetType)
 

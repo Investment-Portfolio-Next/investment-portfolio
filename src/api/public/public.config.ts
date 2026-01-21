@@ -1,7 +1,7 @@
-import type { APIProvider, APIConfig } from './public.types'
+import type { APIProvider, IAPIConfig } from './public.types'
 
 // Multi-API configuration with fallback priority
-export const API_CONFIGS: Record<APIProvider, APIConfig> = {
+export const API_CONFIGS: Record<APIProvider, IAPIConfig> = {
     twelvedata: {
         provider: 'twelvedata',
         name: 'Twelve Data',

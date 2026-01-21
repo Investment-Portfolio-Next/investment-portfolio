@@ -1,9 +1,15 @@
 import { create } from 'zustand'
-import type { SearchResult, APIProvider, AssetIdentifier, AssetPrice, TransactionDate } from '@/api/public/public.types'
+import type {
+    ISearchResult,
+    APIProvider,
+    AssetIdentifier,
+    AssetPrice,
+    TransactionDate,
+} from '@/api/public/public.types'
 import { assetQueries } from '@/services/publicQueries/assetQueries'
 import { formatDateToInput } from '@/utils/helper'
 
-interface Asset {
+interface IAsset {
     id: string | null
     symbol: string
     name: string
@@ -13,11 +19,11 @@ interface Asset {
     price: AssetPrice
 }
 
-interface AssetState {
-    asset: Asset | null
+interface IAssetState {
+    asset: IAsset | null
     isLoadingPrice: boolean
     priceError: string | null
-    setAsset: (selectedAsset: SearchResult) => void
+    setAsset: (selectedAsset: ISearchResult) => void
     setNewDate: (newDate: TransactionDate) => void
     setManualPrice: (price: AssetPrice) => void
     getCurrentPrice: () => Promise<void>
@@ -26,17 +32,17 @@ interface AssetState {
     clearPriceError: () => void
 }
 
-export const useAsset = create<AssetState>((set, get) => ({
+export const useAsset = create<IAssetState>((set, get) => ({
     asset: null,
     isLoadingPrice: false,
     priceError: null,
 
-    setAsset: async (selectedAsset: SearchResult) => {
+    setAsset: async (selectedAsset: ISearchResult) => {
         const newAsset = {
             id: selectedAsset.id ?? null,
             symbol: selectedAsset.symbol,
             name: selectedAsset.name,
-            type: selectedAsset.type,
+            type: selectedAsset.assetType,
             provider: selectedAsset.provider ?? null,
             date: formatDateToInput(new Date()),
             price: null,

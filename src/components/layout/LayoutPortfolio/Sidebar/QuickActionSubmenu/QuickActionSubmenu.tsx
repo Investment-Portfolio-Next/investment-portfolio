@@ -9,11 +9,11 @@ import { ErrorModal } from '@/components/shared/modals/ErrorModal'
 import { useAsset } from '@/store/useAsset'
 import type { INormalizedError } from '@/lib/errors/error.types'
 
-interface QuickActionSubmenuProps {
+interface IQuickActionSubmenuProps {
     closeSubmenu: () => void
 }
 
-export function QuickActionSubmenu({ closeSubmenu }: QuickActionSubmenuProps) {
+export function QuickActionSubmenu({ closeSubmenu }: IQuickActionSubmenuProps) {
     const [openModalId, setOpenModalId] = useState<string | null>(null)
     const [flow, setFlow] = useState<FlowState>(null)
 

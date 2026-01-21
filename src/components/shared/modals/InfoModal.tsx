@@ -5,7 +5,7 @@ import { Modal } from '@/components/ui/modal/Modal'
 import { Check, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button/Button'
 
-interface InfoModalProps {
+interface IInfoModalProps {
     onClose: () => void
     type: 'success' | 'error'
     title?: string
@@ -28,7 +28,7 @@ const typeConfig = {
     },
 } as const
 
-export function InfoModal({ onClose, type, title, message }: InfoModalProps) {
+export function InfoModal({ onClose, type, title, message }: IInfoModalProps) {
     const { color, defaultTitle, icon, defaultMessage } = typeConfig[type]
     const Icon = icon
 

@@ -4,7 +4,7 @@ export type AssetType = (typeof ASSET_TYPES)[number]
 export const CURRENCY_TYPES = ['USD', 'EUR', 'RUB'] as const
 export type CurrencyType = (typeof CURRENCY_TYPES)[number]
 
-export interface CurrencyMeta {
+export interface ICurrencyMeta {
     value: CurrencyType
     label: string
     symbol: string

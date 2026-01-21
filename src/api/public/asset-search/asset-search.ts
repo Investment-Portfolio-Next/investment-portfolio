@@ -1,11 +1,11 @@
 import type { AssetType } from '@/types/commonTypes.types'
-import type { APIProvider, SearchResult, DataSearchResults } from '../public.types'
+import type { APIProvider, ISearchResult, DataSearchResults } from '../public.types'
 import { transformSearchResults } from '../public.utils'
 import { CRYPTO_PROVIDERS, BOND_PROVIDERS, STOCK_ETF_PROVIDERS, API_CONFIGS, API_KEYS } from '../public.config'
 import { publicAxios } from '@/lib/api/public'
 
 // Search function with fallback
-export const searchAssets = async (query: string, assetType: AssetType): Promise<SearchResult[]> => {
+export const searchAssets = async (query: string, assetType: AssetType): Promise<ISearchResult[]> => {
     if (!query.trim()) return []
 
     const providers =
@@ -44,7 +44,7 @@ const searchWithProvider = async (
     query: string,
     assetType: AssetType,
     provider: APIProvider,
-): Promise<SearchResult[]> => {
+): Promise<ISearchResult[]> => {
     const config = API_CONFIGS[provider]
     const apiKey = API_KEYS[provider]
     const url = config.endpoints.search(query, apiKey)

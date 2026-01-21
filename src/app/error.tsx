@@ -3,12 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { Button } from '@/ui/button/Button'
 
-interface ErrorPageProps {
+interface IErrorPageProps {
     error: Error
     reset: () => void
 }
 
-export default function ErrorPage({ error, reset }: ErrorPageProps) {
+export default function ErrorPage({ error, reset }: IErrorPageProps) {
     const router = useRouter()
     const message = error.message
 

@@ -8,12 +8,12 @@ import { SidebarMenuItem } from './SidebarMenuItem/SidebarMenuItem'
 import { match } from 'path-to-regexp'
 import { usePathname } from 'next/navigation'
 
-interface SidebarMenuProps {
+interface ISidebarMenuProps {
     collapsedMenu: boolean
     ignoreClickRef?: React.RefObject<HTMLButtonElement | null>
 }
 
-export function SidebarMenu({ collapsedMenu, ignoreClickRef }: SidebarMenuProps) {
+export function SidebarMenu({ collapsedMenu, ignoreClickRef }: ISidebarMenuProps) {
     const [submenuOpen, setSubmenuOpen] = useState<boolean>(false)
     const submenuRef = useRef<HTMLDivElement | null>(null)
     const buttonRef = useRef<HTMLButtonElement | null>(null)

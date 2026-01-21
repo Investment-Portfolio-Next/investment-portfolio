@@ -5,7 +5,7 @@ import { TransactionsForm } from './TransactionForm/TransactionForm'
 import type { AssetType } from '@/types/commonTypes.types'
 import type { INormalizedError } from '@/lib/errors/error.types'
 
-interface ModalTransactionsProps {
+interface IModalTransactionsProps {
     onClose: () => void
     onSuccess: () => void
     onError: (error: INormalizedError) => void
@@ -13,7 +13,7 @@ interface ModalTransactionsProps {
     assetType: AssetType
 }
 
-export function ModalTransactions({ onClose, onSuccess, onError, modalTitle, assetType }: ModalTransactionsProps) {
+export function ModalTransactions({ onClose, onSuccess, onError, modalTitle, assetType }: IModalTransactionsProps) {
     return (
         <Modal onClose={onClose} modalTitle={modalTitle}>
             <TransactionsForm onClose={onClose} assetType={assetType} onSuccess={onSuccess} onError={onError} />

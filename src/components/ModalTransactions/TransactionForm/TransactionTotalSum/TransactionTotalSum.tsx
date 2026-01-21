@@ -1,7 +1,7 @@
 import { getCurrencySymbol } from '@/utils/helper'
 import type { CurrencyType } from '@/types/commonTypes.types'
 
-interface TransactionTotalSumProps {
+interface ITransactionTotalSumProps {
     typeOfTransaction: string
     currency: CurrencyType
     price: number | null
@@ -21,7 +21,7 @@ export function TransactionTotalSum({
     isBond = false,
     accruedInterest = 0,
     accruedPerBond = true,
-}: TransactionTotalSumProps) {
+}: ITransactionTotalSumProps) {
     const safeNumber = (value: number | null | undefined) => (value == null || isNaN(value) ? 0 : value)
 
     const total = Number(

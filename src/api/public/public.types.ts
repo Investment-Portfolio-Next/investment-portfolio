@@ -4,13 +4,13 @@ export type StockSymbol = string // e.g., "AAPL", "TSLA"
 export type CryptoId = string // e.g., "btc-bitcoin-1", "eth-ethereum"
 
 export type AssetIdentifier = StockSymbol | CryptoId
-export interface APIConfig {
+export interface IAPIConfig {
     provider: APIProvider
     name: string
     limit: number
     endpoints: {
-        search: (query: string, apiKey: string) => string
-        currentPrice: (symbol: string, apiKey: string) => string
+        search: (query: string, apiKey?: string) => string
+        currentPrice: (symbol: string, apiKey?: string) => string
         historicalPrice?: (
             identifier: AssetIdentifier,
             date: number | string,
@@ -20,137 +20,123 @@ export interface APIConfig {
     }
 }
 
-export interface SearchResult {
-    id?: string | null
+//----------------------------
+export interface ISearchResult {
+    id: string | null
     symbol: string
     name: string
-    type: string
-    provider?: APIProvider
+    assetType: string
+    provider: APIProvider
 }
 
-//TODO: uncomment for price fetches
-// export interface PriceData {
-//     symbol: string
-//     price: number
-//     change?: number
-//     changePercent?: number
-//     date: string
-//     provider: APIProvider
-//     timestamp: number
-// }
-
+//----------------------------
 // API Response types for different providers
-
 export type DataSearchResults =
-    | TwelveDataSearchResponse
-    | FinnhubSearchResponse
-    | AlphaVantageSearchResponse
-    | CoinGeckoSearchResponse
-    | CoinPaprikaSearchResponse
+    | ITwelveDataSearchResponse
+    | IFinnhubSearchResponse
+    | IAlphaVantageSearchResponse
+    | ICoinGeckoSearchResponse
+    | ICoinPaprikaSearchResponse
 
 export type SearchResultUnion =
-    | TwelveDataSearchResult
-    | FinnhubSearchResult
-    | AlphaVantageSearchResult
-    | CoinGeckoSearchResult
-    | CoinPaprikaSearchResult
+    | ITwelveDataSearchResult
+    | IFinnhubSearchResult
+    | IAlphaVantageSearchResult
+    | ICoinGeckoSearchResult
+    | ICoinPaprikaSearchResult
 
 // twelvedata
-export interface TwelveDataSearchResult {
+export interface ITwelveDataSearchResult {
     symbol: string
     instrument_name: string
     instrument_type: string
 }
 
-export interface TwelveDataSearchResponse {
-    data: TwelveDataSearchResult[]
-}
-
-export interface TwelveDataPrice {
-    price: string
+export interface ITwelveDataSearchResponse {
+    data: ITwelveDataSearchResult[]
 }
 
 // finnhub
-export interface FinnhubSearchResult {
+export interface IFinnhubSearchResult {
     description: string
     symbol: string
     type: string
 }
 
-export interface FinnhubSearchResponse {
-    result: FinnhubSearchResult[]
+export interface IFinnhubSearchResponse {
+    result: IFinnhubSearchResult[]
 }
 
 // alphavantage
-export interface AlphaVantageSearchResult {
+export interface IAlphaVantageSearchResult {
     '1. symbol': string
     '2. name': string
     '3. type': string
 }
 
-export interface AlphaVantageSearchResponse {
-    bestMatches: AlphaVantageSearchResult[]
+export interface IAlphaVantageSearchResponse {
+    bestMatches: IAlphaVantageSearchResult[]
 }
 
 // coingecko
-export interface CoinGeckoSearchResult {
+export interface ICoinGeckoSearchResult {
     id: string // should be used for further requests
     name: string
     symbol: string
 }
 
-export interface CoinGeckoSearchResponse {
-    coins: CoinGeckoSearchResult[]
+export interface ICoinGeckoSearchResponse {
+    coins: ICoinGeckoSearchResult[]
 }
 
 // coinpaprika
-export interface CoinPaprikaSearchResult {
+export interface ICoinPaprikaSearchResult {
     id: string // should be used for further requests
     name: string
     symbol: string
     type: string
 }
 
-export interface CoinPaprikaSearchResponse {
-    currencies: CoinPaprikaSearchResult[]
+export interface ICoinPaprikaSearchResponse {
+    currencies: ICoinPaprikaSearchResult[]
 }
 
 //----------------------------
 export type AssetPrice = number | null
 
 export type CurrentPriceSearchUnion =
-    | TwelveDataCurrentPriceSearchResponse
-    | FinnhubCurrentPriceSearchResponse
-    | AlphaVantageCurrentPriceSearchResponse
-    | CoinGeckoCurrentPriceSearchResponse
-    | CoinPaprikaCurrentPriceSearchResponse
+    | ITwelveDataCurrentPriceSearchResponse
+    | IFinnhubCurrentPriceSearchResponse
+    | IAlphaVantageCurrentPriceSearchResponse
+    | ICoinGeckoCurrentPriceSearchResponse
+    | ICoinPaprikaCurrentPriceSearchResponse
 
 // twelvedata
-export interface TwelveDataCurrentPriceSearchResponse {
+export interface ITwelveDataCurrentPriceSearchResponse {
     price: string
 }
 
 // finnhub
-export interface FinnhubCurrentPriceSearchResponse {
+export interface IFinnhubCurrentPriceSearchResponse {
     c: string
 }
 
 // alphavantage
-export interface AlphaVantageCurrentPriceSearchResponse {
+export interface IAlphaVantageCurrentPriceSearchResponse {
     'Global Quote': {
         '05. price': string
     }
 }
 
 // coingecko
-export interface CoinGeckoCurrentPriceSearchResponse {
+export interface ICoinGeckoCurrentPriceSearchResponse {
     [key: string]: {
         usd: number
     }
 }
 
 // coinpaprika
-export interface CoinPaprikaCurrentPriceSearchResponse {
+export interface ICoinPaprikaCurrentPriceSearchResponse {
     quotes: {
         USD: {
             price: number
@@ -162,11 +148,11 @@ export interface CoinPaprikaCurrentPriceSearchResponse {
 export type TransactionDate = number | string
 
 export type SearchHistoricalPriceResultUnion =
-    | HistoricalPriceResultTwelvedata
-    | HistoricalPriceResultAlphavantage
-    | HistoricalPriceResultCoingecko
+    | IHistoricalPriceResultTwelvedata
+    | IHistoricalPriceResultAlphavantage
+    | IHistoricalPriceResultCoingecko
 
-export interface HistoricalPriceResultTwelvedata {
+export interface IHistoricalPriceResultTwelvedata {
     values: [
         {
             datetime: string
@@ -174,14 +160,14 @@ export interface HistoricalPriceResultTwelvedata {
         },
     ]
 }
-export interface HistoricalPriceResultAlphavantage {
+export interface IHistoricalPriceResultAlphavantage {
     'Time Series (Daily)': {
         [key: string]: {
             '4. close': string
         }
     }
 }
-export interface HistoricalPriceResultCoingecko {
+export interface IHistoricalPriceResultCoingecko {
     market_data: {
         current_price: {
             usd: number
