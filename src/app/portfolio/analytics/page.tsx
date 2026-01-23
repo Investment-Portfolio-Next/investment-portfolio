@@ -5,5 +5,5 @@ export const metadata: Metadata = {
 }
 
 export default function Account() {
-    return <div>Account - страница с инфой по портфелям</div>
+    return <div>Portfolio Analytics</div>
 }

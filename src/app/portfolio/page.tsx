@@ -5,5 +5,5 @@ export const metadata: Metadata = {
 }
 
 export default function Portfolio() {
-    return <div>Portfolio - страница с инфой по портфелям</div>
+    return <div>Portfolio Page</div>
 }
