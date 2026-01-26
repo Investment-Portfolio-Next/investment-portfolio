@@ -38,7 +38,7 @@ export default function ErrorPage({ error, reset }: IErrorPageProps) {
                 </Button>
 
                 <Button type="button" onClick={handleHome} variant="primaryTransparent">
-                    Home!!
+                    Home
                 </Button>
             </div>
 

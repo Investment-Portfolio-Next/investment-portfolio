@@ -21,7 +21,7 @@ export const getTransactionListServer = async (assetType: AssetType) => {
     })
 }
 
-export const getTransactionByIdServer = async (id: string, assetType: AssetType) => {
+export const getTransactionByIdServer = async (assetType: AssetType, id: string) => {
     return serverFetch<Transaction>(`${baseURL}/${TRANSACTION_BASE_PATH[assetType]}/${id}/`, {
         next: {
             revalidate: 60,
