@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Modal } from '@/components/ui/modal/Modal'
+import { Modal } from '../../ui/modal/Modal'
 import { Check, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button/Button'
 
