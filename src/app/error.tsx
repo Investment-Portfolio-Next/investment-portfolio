@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Button } from '@/ui/button/Button'
+import { Button } from '@/components/ui/button/Button'
 
 interface IErrorPageProps {
     error: Error

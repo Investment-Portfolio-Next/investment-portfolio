@@ -13,9 +13,9 @@ import type { ITransactionForm, ITransactionSubmit } from './transactionForm.typ
 import { transactionTypeOptions, transactionCurrencyOptions } from './transactionsOptions.data'
 import { getValidationRules } from './validations'
 import { TransactionTotalSum } from './TransactionTotalSum/TransactionTotalSum'
-import { SearchField } from '@/ui/form/searchField/SearchField'
+import { SearchField } from '@/components/ui/form/searchField/SearchField'
 import { useAsset } from '@/store/useAsset'
-import { DateField } from '@/ui/form/dateField/DateField'
+import { DateField } from '@/components/ui/form/dateField/DateField'
 import type { INormalizedError } from '@/lib/errors/error.types'
 import { useCreateTransaction } from '@/services/clientQueries/query-hooks/useCreateTransaction'
 

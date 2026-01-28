@@ -2,7 +2,7 @@
 
 import { useGetTransactionById } from '@/services/clientQueries/query-hooks/useGetTransactionById'
 import type { Transaction } from '@/types/transactionTypes/stockTransaction.types'
-import { Button } from '@/ui/button/Button'
+import { Button } from '@/components/ui/button/Button'
 import Link from 'next/link'
 import { useState } from 'react'
 

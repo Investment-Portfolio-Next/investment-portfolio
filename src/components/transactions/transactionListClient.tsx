@@ -3,7 +3,7 @@
 import type { Transaction, TransactionListResponse } from '@/types/transactionTypes/stockTransaction.types'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button } from '@/ui/button/Button'
+import { Button } from '@/components/ui/button/Button'
 
 interface ITransactionListClientProps {
     transactions: TransactionListResponse

@@ -7,8 +7,6 @@ const nextConfig: NextConfig = {
 
     webpack: (config) => {
         config.resolve.alias['@'] = path.resolve(__dirname, 'src')
-        config.resolve.alias['@/ui'] = path.resolve(__dirname, 'src/components/ui')
-
         return config
     },
 }
