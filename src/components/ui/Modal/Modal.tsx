@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 // import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
 interface IModalProps {
     onClose: () => void
     modalTitle?: string
-    children: React.ReactNode
+    children: ReactNode
 }
 
 export function Modal({ onClose, modalTitle, children }: IModalProps) {
