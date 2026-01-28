@@ -1,9 +1,8 @@
 'use client'
+import { InfoModalWrapper } from './InfoModalWrapper'
 
-import { InfoModal } from './InfoModal'
-
-type Props = Omit<React.ComponentProps<typeof InfoModal>, 'type'>
+type Props = Omit<React.ComponentProps<typeof InfoModalWrapper>, 'type'>
 
 export function ErrorModal(props: Props) {
-    return <InfoModal {...props} type="error" />
+    return <InfoModalWrapper {...props} type="error" />
 }

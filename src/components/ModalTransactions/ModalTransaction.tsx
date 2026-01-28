@@ -1,6 +1,6 @@
 'use client'
 
-import { Modal } from '../ui/modal/Modal'
+import { Modal } from '../ui/modalWrapper/Modal'
 import { TransactionsForm } from './TransactionForm/TransactionForm'
 import type { AssetType } from '@/types/commonTypes.types'
 import type { INormalizedError } from '@/lib/errors/error.types'
