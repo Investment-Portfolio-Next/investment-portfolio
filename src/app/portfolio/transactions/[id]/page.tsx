@@ -42,35 +42,39 @@
 // }
 
 // USE getTransactionByIdServer FOR DYNAMIC RENDER AFTER IT IS CREATED BY BACKEND
-import { getTransactionByIdServer } from '@/api/server/stockTransactions.server'
-import TransactionClient from '@/components/transactions/transactionClient'
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+// import { getTransactionByIdServer } from '@/api/server/stockTransactions.server'
+// import TransactionClient from '@/components/transactions/transactionClient'
+// import type { Metadata } from 'next'
+// import { notFound } from 'next/navigation'
 
-interface ITransactionPageProps {
-    params: Promise<{
-        id: string
-    }>
-}
+// interface ITransactionPageProps {
+//     params: Promise<{
+//         id: string
+//     }>
+// }
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
-export async function generateMetadata({ params }: ITransactionPageProps): Promise<Metadata> {
-    const { id } = await params // params, searchParams, cookies, headers should be awaited
+// export async function generateMetadata({ params }: ITransactionPageProps): Promise<Metadata> {
+//     const { id } = await params // params, searchParams, cookies, headers should be awaited
 
-    return {
-        title: `Transaction ${id}`,
-    }
-}
+//     return {
+//         title: `Transaction ${id}`,
+//     }
+// }
 
-// server TransactionPage component: for quick first render of existing transaction pages
-export default async function TransactionPage({ params }: ITransactionPageProps) {
-    const { id } = await params // params should be awaited
+// // server TransactionPage component: for quick first render of existing transaction pages
+// export default async function TransactionPage({ params }: ITransactionPageProps) {
+//     const { id } = await params // params should be awaited
 
-    const transaction = await getTransactionByIdServer('stock', id)
+//     const transaction = await getTransactionByIdServer('stock', id)
 
-    if (!transaction) notFound()
+//     if (!transaction) notFound()
 
-    // client component to allow user modify transaction
-    return <TransactionClient initialTransaction={transaction} />
+//     // client component to allow user modify transaction
+//     return <TransactionClient initialTransaction={transaction} />
+// }
+
+export default function TransactionPage() {
+    return <div>Dummy div</div>
 }
