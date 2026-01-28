@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getTransactionListServer } from '@/api/server/stockTransactions.server'
+// import { getTransactionListServer } from '@/api/server/stockTransactions.server'
 import type { TransactionListResponse } from '@/types/transactionTypes/stockTransaction.types'
 
 import TransactionListClient from '@/components/transactions/transactionListClient'
@@ -9,8 +9,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Transactions() {
-    const transactions: TransactionListResponse = await getTransactionListServer('stock')
-    console.log(transactions)
+    // const transactions: TransactionListResponse = await getTransactionListServer('stock')
+
+    const transactions: TransactionListResponse = [] // temporarily added until server is fixed
 
     return (
         <>
